@@ -1,0 +1,36 @@
+/*
+ * Empty Stylesheet file.
+ */
+
+.mainFxmlClass {
+
+}
+.sidebar{
+    -fx-background-color: #333333
+}
+.rightSide{
+    -fx-background-color: #ffffff
+}
+
+.lableText{
+    -fx-font : bold 13pt "ebrima";
+    -fx-padding: 0px 10px 0px 0px;
+}
+
+.text-field {
+	-fx-accent: -fx-primary-color;
+	-fx-background-color: -fx-grey-color, white;
+	-fx-background-insets: 0, 0 0 1 0;
+	-fx-background-radius: 0;
+}
+.text-field:focused {
+	-fx-background-color: -fx-primary-color, white;
+}
+.button {
+    -fx-background-color: #83163B;
+    -fx-background-radius: 30;
+    -fx-background-insets: 0,1,1;
+    -fx-text-fill: white;
+    -fx-font: bold 12pt "embrima";
+    -fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.6) , 3, 0.0 , 0 , 1 );
+}

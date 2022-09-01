@@ -1,0 +1,30 @@
+.button{
+    -fx-font-weight:bold;
+    -fx-text-fill: white;
+    -fx-font: 12pt "embrima";   
+    -fx-background-color: #83163B;
+    -fx-padding:3px;
+    -fx-background-radius: 5;
+    
+}
+.button:hover{
+    -fx-font-weight:bold;
+    -fx-border-color: #83163B;
+    -fx-border-radius: 5;
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 5;
+    -fx-text-fill: black;
+    -fx-font: 12pt "embrima";   
+    -fx-padding:3px;
+
+}
+.button:pressed{
+    -fx-font-weight:bold;
+   -fx-background-color: #83163B;
+    -fx-text-fill: white;
+    -fx-background-radius:5;
+    -fx-border-color: #000000;
+    -fx-rotate: 10;
+    -fx-font: 12pt "embrima";   
+}
+

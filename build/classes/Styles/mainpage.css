@@ -1,0 +1,11 @@
+/*
+ * Empty Stylesheet file.
+ */
+
+.mainFxmlClass {
+-fx-background-color: #C2C2C2;
+}
+.sidebar{
+    -fx-background-color: #F2F2F2;
+    
+}

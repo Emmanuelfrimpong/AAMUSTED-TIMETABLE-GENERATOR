@@ -1,0 +1,26 @@
+/*
+ * Empty Stylesheet file.
+ */
+
+.mainFxmlClass {
+
+}
+.textfield {
+	-fx-accent: -fx-primary-color;
+	-fx-background-color: -fx-grey-color, black;
+	-fx-background-insets: 0, 0 0 1 0;
+	-fx-background-radius: 0;
+}
+.textfield:focused {
+	-fx-background-color: -fx-primary-color, black;
+        -fx-background-color: -fx-grey-color, black;
+	-fx-background-insets: 0, 0 0 1 0;
+}
+.button {
+    -fx-background-color: #83163B;
+    -fx-background-radius: 5;
+    -fx-background-insets: 0,0,0;
+    -fx-text-fill: white;
+    -fx-font: 12pt "embrima";   
+    -fx-padding:3px;
+}

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import java.net.URL?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+
+<AnchorPane id="AnchorPane" prefHeight="599.0" prefWidth="837.0" styleClass="mainFxmlClass" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controllers.DatasetPageController">
+    <stylesheets>
+        <URL value="@/Styles/datasetpage.css" />
+    </stylesheets>
+   <children>
+      <HBox alignment="CENTER" prefHeight="43.0" prefWidth="525.0" style="-fx-background-color: #83163B;" stylesheets="@../Styles/datasetpage.css" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <JFXButton fx:id="btn_student" onAction="#switchStudent" prefHeight="38.0" prefWidth="136.0" styleClass="menuItem" text="Students" textFill="#ccc6c6">
+               <graphic>
+                  <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../images/icons8_student_registration_50px.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </JFXButton>
+            <JFXButton fx:id="btn_venue" onAction="#switchVenue" prefHeight="38.0" prefWidth="136.0" styleClass="menuItem" text="Venues" textFill="#ccc6c6">
+               <graphic>
+                  <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../images/icons8_classroom_50px.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </JFXButton>
+            <JFXButton fx:id="btn_course" onAction="#switchCourses" prefHeight="38.0" prefWidth="136.0" styleClass="menuItem" text="Courses" textFill="#ccc6c6">
+               <graphic>
+                  <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../images/icons8_book_shelf_80px.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </JFXButton>
+            <JFXButton fx:id="btn_lecturer" onAction="#switchLecturer" prefHeight="38.0" prefWidth="136.0" styleClass="menuItem" text="Lecturers" textFill="#ccc6c6">
+               <graphic>
+                  <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../images/icons8_teacher_50px.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </JFXButton>
+         </children>
+      </HBox>
+      <StackPane fx:id="main_container" layoutX="219.0" layoutY="43.0" prefHeight="556.0" prefWidth="837.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="43.0" />
+   </children>
+</AnchorPane>

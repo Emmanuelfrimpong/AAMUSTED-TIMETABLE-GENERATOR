@@ -1,0 +1,15 @@
+/*
+ * Empty Stylesheet file.
+ */
+
+.mainFxmlClass {
+   
+}
+.menuItem:hover{
+    -fx-border-color: #ffffff;
+    -fx-border-width: 0px 0px 3px 0px;
+}
+.menuItem:click{
+     -fx-border-color: #ffffff;
+    -fx-border-width: 0px 0px 3px 0px;
+}
