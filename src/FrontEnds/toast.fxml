@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="81.0" prefWidth="200.0" style="-fx-background-color: #fe4451; -fx-background-radius: 15px;" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controllers.ToastController">
+   <children>
+      <Text fx:id="txt_message" fill="WHITE" layoutX="63.0" layoutY="37.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" textAlignment="CENTER" wrappingWidth="180.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="15.0">
+         <font>
+            <Font name="System Bold" size="12.0" />
+         </font>
+      </Text>
+      <ImageView fitHeight="27.0" fitWidth="36.0" layoutX="82.0" layoutY="14.0" pickOnBounds="true" preserveRatio="true" AnchorPane.topAnchor="5.0">
+         <image>
+            <Image url="@../images/icons8_info_512px.png" />
+         </image>
+      </ImageView>
+   </children>
+</AnchorPane>

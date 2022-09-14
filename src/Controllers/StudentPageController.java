@@ -43,7 +43,7 @@ public class StudentPageController implements Initializable {
     @FXML
     private TableView<StudentsObject> tb_studnts;
     @FXML
-    private TableColumn<StudentsObject, String> col_id;
+    private TableColumn<StudentsObject, String> col_level;
     @FXML
     private TableColumn<StudentsObject, String> col_name;
     @FXML
@@ -74,7 +74,7 @@ public class StudentPageController implements Initializable {
 
     }
 
-    private void getStudentsData() {
+    void getStudentsData() {
         data = FXCollections.observableArrayList();
         Service<ObservableList<StudentsObject>> service = new Service<ObservableList<StudentsObject>>() {
             @Override
@@ -88,8 +88,8 @@ public class StudentPageController implements Initializable {
             }
         };
         service.setOnSucceeded((WorkerStateEvent event) -> {
-            data = service.getValue();
-            col_id.setCellValueFactory(new PropertyValueFactory<>("Id"));
+            data = service.getValue();            
+            col_level.setCellValueFactory(new PropertyValueFactory<>("level"));
             col_name.setCellValueFactory(new PropertyValueFactory<>("name"));
             col_department.setCellValueFactory(new PropertyValueFactory<>("department"));
             col_size.setCellValueFactory(new PropertyValueFactory<>("size"));
@@ -113,7 +113,7 @@ public class StudentPageController implements Initializable {
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         File selectedFile = fileChooser.showOpenDialog(stage);
         if (selectedFile.exists()) {
-            services.LoadStudentsToDatabase(stage,selectedFile);
+            services.LoadStudentsToDatabase(stage, selectedFile, data);
         }
     }
 

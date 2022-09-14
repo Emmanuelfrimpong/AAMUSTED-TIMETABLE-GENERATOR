@@ -1,10 +1,5 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
-package Objects;
 
-import java.time.Instant;
+package Objects;
 import java.util.List;
 import org.bson.Document;
 import org.bson.types.ObjectId;
@@ -14,35 +9,30 @@ import org.bson.types.ObjectId;
  * @author emman
  */
 public class StudentsObject {   
-    String Id;
     String name;
+    String level;
     String department;
     String size;
     String hasDisability;
     List courses;
-    Instant createdAt;
-
+    String createdAt;
+    
     public StudentsObject() {
     }
 
-    public StudentsObject(String Id, String name, String department, String size, String hasDisability, List courses, Instant createdAt) {
-        this.Id = Id;
+    public StudentsObject(String level, String name, String department, String size, String hasDisability, List courses, String createdAt) {    
         this.name = name;
         this.department = department;
         this.size = size;
         this.hasDisability = hasDisability;
         this.courses = courses;
         this.createdAt = createdAt;
+        this.level=level;
     }
 
-    public String getId() {
-        return Id;
-    }
+    
 
-    public void setId(String Id) {
-        this.Id = Id;
-    }
-
+    
     public String getName() {
         return name;
     }
@@ -83,12 +73,20 @@ public class StudentsObject {
         this.courses = courses;
     }
 
-    public Instant getCreatedAt() {
+    public String getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(Instant createdAt) {
+    public void setCreatedAt(String createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public String getLevel() {
+        return level;
+    }
+
+    public void setLevel(String level) {
+        this.level = level;
     }
 
     
@@ -99,7 +97,7 @@ public class StudentsObject {
         public Document toBsonDocs() {
         Document doc = new Document("_id", new ObjectId());
         
-        doc.append("id", this.Id)
+        doc.append("level", this.level)
                 .append("createdAt", this.createdAt)
                 .append("courses", this.courses)
                 .append("department", this.department)
@@ -112,12 +110,13 @@ public class StudentsObject {
     
    public StudentsObject fromDocument(Document doc){
        StudentsObject student=new StudentsObject();
-        student.createdAt=(Instant) doc.get("createdAt");
-        student.Id=doc.getString("Id");
+        student.createdAt=doc.getString("createdAt");
+        student.level=doc.getString("level");
         student.courses=(List<String>) doc.get("courses");
         student.department=doc.getString("department");
         student.hasDisability=doc.getString("hasDisability");
         student.size=doc.getString("size");
+        student.name=doc.getString("name");
         return student;
     }
 }
