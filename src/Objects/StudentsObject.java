@@ -1,5 +1,6 @@
 
 package Objects;
+
 import java.util.List;
 import org.bson.Document;
 import org.bson.types.ObjectId;
@@ -8,115 +9,119 @@ import org.bson.types.ObjectId;
  *
  * @author emman
  */
-public class StudentsObject {   
-    String name;
-    String level;
-    String department;
-    String size;
-    String hasDisability;
-    List courses;
-    String createdAt;
-    
-    public StudentsObject() {
-    }
+public class StudentsObject {
+  String level;
+  String name;
+  String size;
+  String hasDisability;
+  List courses;
+  String department;
+  String createdAt;
+  ObjectId _id;
 
-    public StudentsObject(String level, String name, String department, String size, String hasDisability, List courses, String createdAt) {    
-        this.name = name;
-        this.department = department;
-        this.size = size;
-        this.hasDisability = hasDisability;
-        this.courses = courses;
-        this.createdAt = createdAt;
-        this.level=level;
-    }
+  public StudentsObject() {
+  }
 
-    
+  public StudentsObject(String level, String name, String size, String hasDisability, List courses, String department,
+      String createdAt, ObjectId _id) {
+    this.level = level;
+    this.name = name;
+    this.size = size;
+    this.hasDisability = hasDisability;
+    this.courses = courses;
+    this.department = department;
+    this.createdAt = createdAt;
+    this._id = _id;
+  }
 
-    
-    public String getName() {
-        return name;
-    }
+  public String getLevel() {
+    return level;
+  }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+  public void setLevel(String level) {
+    this.level = level;
+  }
 
-    public String getDepartment() {
-        return department;
-    }
+  public String getName() {
+    return name;
+  }
 
-    public void setDepartment(String department) {
-        this.department = department;
-    }
+  public void setName(String name) {
+    this.name = name;
+  }
 
-    public String getSize() {
-        return size;
-    }
+  public String getSize() {
+    return size;
+  }
 
-    public void setSize(String size) {
-        this.size = size;
-    }
+  public void setSize(String size) {
+    this.size = size;
+  }
 
-    public String getHasDisability() {
-        return hasDisability;
-    }
+  public String getHasDisability() {
+    return hasDisability;
+  }
 
-    public void setHasDisability(String hasDisability) {
-        this.hasDisability = hasDisability;
-    }
+  public void setHasDisability(String hasDisability) {
+    this.hasDisability = hasDisability;
+  }
 
-    public List getCourses() {
-        return courses;
-    }
+  public List getCourses() {
+    return courses;
+  }
 
-    public void setCourses(List courses) {
-        this.courses = courses;
-    }
+  public void setCourses(List courses) {
+    this.courses = courses;
+  }
 
-    public String getCreatedAt() {
-        return createdAt;
-    }
+  public String getDepartment() {
+    return department;
+  }
 
-    public void setCreatedAt(String createdAt) {
-        this.createdAt = createdAt;
-    }
+  public void setDepartment(String department) {
+    this.department = department;
+  }
 
-    public String getLevel() {
-        return level;
-    }
+  public String getCreatedAt() {
+    return createdAt;
+  }
 
-    public void setLevel(String level) {
-        this.level = level;
-    }
+  public void setCreatedAt(String createdAt) {
+    this.createdAt = createdAt;
+  }
 
-    
-    
-   
-    
-    
-        public Document toBsonDocs() {
-        Document doc = new Document("_id", new ObjectId());
-        
-        doc.append("level", this.level)
-                .append("createdAt", this.createdAt)
-                .append("courses", this.courses)
-                .append("department", this.department)
-                .append("hasDisability", this.hasDisability)
-                .append("name", this.name)
-                .append("size",this.size);
+  public ObjectId get_id() {
+    return _id;
+  }
 
-        return doc;
-    }
-    
-   public StudentsObject fromDocument(Document doc){
-       StudentsObject student=new StudentsObject();
-        student.createdAt=doc.getString("createdAt");
-        student.level=doc.getString("level");
-        student.courses=(List<String>) doc.get("courses");
-        student.department=doc.getString("department");
-        student.hasDisability=doc.getString("hasDisability");
-        student.size=doc.getString("size");
-        student.name=doc.getString("name");
-        return student;
-    }
+  public void set_id(ObjectId _id) {
+    this._id = _id;
+  }
+
+  public Document toDocument() {
+    Document doc = new Document();
+    doc.put("level", level);
+    doc.put("name", name);
+    doc.put("size", size);
+    doc.put("hasDisability", hasDisability);
+    doc.put("courses", courses);
+    doc.put("department", department);
+    doc.put("createdAt", createdAt);
+    doc.put("_id", _id);
+    return doc;
+  }
+
+  public static StudentsObject fromDocument(Document doc) {
+    StudentsObject obj = new StudentsObject();
+    obj.setLevel(doc.getString("level"));
+    obj.setName(doc.getString("name"));
+    obj.setSize(doc.getString("size"));
+    obj.setHasDisability(doc.getString("hasDisability"));
+    obj.setCourses(doc.getList("courses", String.class));
+    obj.setDepartment(doc.getString("department"));
+    obj.setCreatedAt(doc.getString("createdAt"));
+    obj.set_id(doc.getObjectId("_id"));
+    return obj;
+  }
+
 }

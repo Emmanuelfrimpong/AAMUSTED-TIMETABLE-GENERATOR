@@ -108,3 +108,33 @@
 .combo-box-popup > .list-view > .placeholder > .label {
     -fx-text-fill: blue;
 }
+
+.altButton{
+    -fx-font-weight:bold;
+    -fx-text-fill: #83163B;
+    -fx-font: 12pt "embrima";   
+    -fx-background-color: #ffffff;
+    -fx-padding:3px;
+    -fx-background-radius: 5;
+    
+}
+.altButton:hover{
+    -fx-font-weight:bold;
+    -fx-border-color: #83163B;
+    -fx-border-radius: 5;
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 5;
+    -fx-text-fill: #83163B;
+    -fx-font: 12pt "embrima";   
+    -fx-padding:3px;
+
+}
+.altButton:pressed{
+    -fx-font-weight:bold;
+   -fx-background-color: #ffffff;
+    -fx-text-fill: #83163B;
+    -fx-background-radius:5;
+    -fx-border-color: #000000;
+    -fx-rotate: 10;
+    -fx-font: 12pt "embrima";   
+}

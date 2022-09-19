@@ -3,10 +3,12 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/emman/Documents/NetBeansProjects/AAMUSTED%20TIMETABLE%20GENERATOR/src/Controllers/StudentPageController.java</file>
-            <file>file:/C:/Users/emman/Documents/NetBeansProjects/AAMUSTED%20TIMETABLE%20GENERATOR/src/Controllers/StudentConfirmPageController.java</file>
+            <file>file:/C:/Users/emman/Documents/NetBeansProjects/AAMUSTED%20TIMETABLE%20GENERATOR/src/Controllers/TablesPageController.java</file>
             <file>file:/C:/Users/emman/Documents/NetBeansProjects/AAMUSTED%20TIMETABLE%20GENERATOR/src/MongoServices/DatabaseServices.java</file>
-            <file>file:/C:/Users/emman/Documents/NetBeansProjects/AAMUSTED%20TIMETABLE%20GENERATOR/src/Controllers/CoursePageController.java</file>
+            <file>file:/C:/Users/emman/Documents/NetBeansProjects/AAMUSTED%20TIMETABLE%20GENERATOR/src/Controllers/DepartmentFilesController.java</file>
+            <file>file:/C:/Users/emman/Documents/NetBeansProjects/AAMUSTED%20TIMETABLE%20GENERATOR/src/Objects/StudentsObject.java</file>
+            <file>file:/C:/Users/emman/Documents/NetBeansProjects/AAMUSTED%20TIMETABLE%20GENERATOR/src/Objects/ClassCoursePair.java</file>
+            <file>file:/C:/Users/emman/Documents/NetBeansProjects/AAMUSTED%20TIMETABLE%20GENERATOR/src/Objects/CoursesObject.java</file>
         </group>
     </open-files>
 </project-private>

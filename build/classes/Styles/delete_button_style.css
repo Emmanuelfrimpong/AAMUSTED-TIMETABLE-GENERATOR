@@ -1,0 +1,36 @@
+/*
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/Other/CascadeStyleSheet.css to edit this template
+*/
+/* 
+    Created on : Feb 27, 2022, 12:35:39 PM
+    Author     : emman
+*/
+
+
+.button{
+    -fx-font-weight:bold;
+    -fx-background-color: #F62217;
+    -fx-text-fill:  #ffffff;
+    -fx-background-radius:5;
+    -fx-content-display: center;
+    
+}
+.button:hover{
+    -fx-font-weight:bold;
+    -fx-background-color: #F62217;
+    -fx-text-fill:  #000000;
+    -fx-background-radius:10;
+    -fx-border-color: #000000;
+    -fx-border-radius: 5;
+
+}
+.button:pressed{
+    -fx-font-weight:bold;
+    -fx-background-color: #F62217;
+    -fx-text-fill:  #000000;
+    -fx-background-radius:5;
+    -fx-border-color: #000000;
+    -fx-border-radius: 11;
+    -fx-rotate: 5;
+}

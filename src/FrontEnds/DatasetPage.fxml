@@ -15,7 +15,7 @@
    <children>
       <HBox alignment="CENTER" prefHeight="43.0" prefWidth="525.0" style="-fx-background-color: #83163B;" stylesheets="@../Styles/datasetpage.css" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <JFXButton fx:id="btn_student" onAction="#switchStudent" prefHeight="38.0" prefWidth="136.0" styleClass="menuItem" text="Students" textFill="#ccc6c6">
+            <JFXButton fx:id="btn_department" layoutX="225.0" layoutY="13.0" onAction="#switchDepartment" prefHeight="38.0" prefWidth="169.0" styleClass="menuItem" text="Department Files" textFill="#ccc6c6">
                <graphic>
                   <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
                      <image>
@@ -29,24 +29,6 @@
                   <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@../images/icons8_classroom_50px.png" />
-                     </image>
-                  </ImageView>
-               </graphic>
-            </JFXButton>
-            <JFXButton fx:id="btn_course" onAction="#switchCourses" prefHeight="38.0" prefWidth="136.0" styleClass="menuItem" text="Courses" textFill="#ccc6c6">
-               <graphic>
-                  <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../images/icons8_book_shelf_80px.png" />
-                     </image>
-                  </ImageView>
-               </graphic>
-            </JFXButton>
-            <JFXButton fx:id="btn_lecturer" onAction="#switchLecturer" prefHeight="38.0" prefWidth="136.0" styleClass="menuItem" text="Lecturers" textFill="#ccc6c6">
-               <graphic>
-                  <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../images/icons8_teacher_50px.png" />
                      </image>
                   </ImageView>
                </graphic>

@@ -16,6 +16,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
@@ -58,7 +59,8 @@ public class GlobalFunctions {
     }
 
     public void closeWindow(Event event) {
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Are you sure you want to Close the Application?", ButtonType.YES, ButtonType.NO);
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Are you sure you want to Close the Application?",
+                ButtonType.YES, ButtonType.NO);
         alert.setHeaderText("Exit");
         alert.getDialogPane().getStylesheets().add("/Styles/dialogStyle.css");
         alert.getDialogPane().setMinSize(400, 200);
@@ -117,7 +119,7 @@ public class GlobalFunctions {
         });
         stage.initModality(Modality.APPLICATION_MODAL);
         stage.setScene(scene);
-        //stage.getIcons().add(new Image("/images/image-removebg-preview.png"));
+        // stage.getIcons().add(new Image("/images/image-removebg-preview.png"));
         stage.showAndWait();
         Rectangle2D primScreenBounds = Screen.getPrimary().getVisualBounds();
         stage.setX((primScreenBounds.getWidth() - stage.getWidth()) / 2);
@@ -131,18 +133,20 @@ public class GlobalFunctions {
         String titleThree = titleRow.getCell(2).getStringCellValue().toLowerCase();
         String titleFour = titleRow.getCell(3).getStringCellValue().toLowerCase();
         String titleFive = titleRow.getCell(4).getStringCellValue().toLowerCase();
-        System.out.println("title: " + titleOne + " " + titleTwo + " " + titleThree + " " + titleFour + " " + titleFive);
-        return titleOne.contains("level") && titleTwo.contains("class_name") && titleThree.contains("class_size") && titleFour.contains("hasdisability") && titleFive.contains("class_courses");
+        System.out
+                .println("title: " + titleOne + " " + titleTwo + " " + titleThree + " " + titleFour + " " + titleFive);
+        return titleOne.contains("level") && titleTwo.contains("class_name") && titleThree.contains("class_size")
+                && titleFour.contains("hasdisability") && titleFive.contains("class_courses");
 
     }
-    
-        public void showToast(String message, Stage parentState) {
+
+    public void showToast(String message, Stage parentState) {
         final double midX = (parentState.getX() + parentState.getWidth()) / 2;
         final double midY = (parentState.getY() + parentState.getHeight()) / 2;
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/FrontEnds/toast.fxml"));
             Parent parent = fxmlLoader.load();
-              ToastController controller = fxmlLoader.<ToastController>getController();
+            ToastController controller = fxmlLoader.<ToastController>getController();
             controller.setMessage(message);
             Stage dialog = new Stage();
             Scene scene = new Scene(parent);
@@ -168,5 +172,40 @@ public class GlobalFunctions {
         } catch (IOException ex) {
             inforAlert("UI Error", ex.getMessage(), Alert.AlertType.ERROR);
         }
+    }
+
+    public boolean verifyExcelFile(Row classTitleRow, Row courseTitleRow) {
+        String classOne = classTitleRow.getCell(0).getStringCellValue().toLowerCase();
+        String classTwo = classTitleRow.getCell(1).getStringCellValue().toLowerCase();
+        String classThree = classTitleRow.getCell(2).getStringCellValue().toLowerCase();
+        String classFour = classTitleRow.getCell(3).getStringCellValue().toLowerCase();
+        String classFive = classTitleRow.getCell(4).getStringCellValue().toLowerCase();
+        String courseOne = courseTitleRow.getCell(0).getStringCellValue().toLowerCase();
+        String courseTwo = courseTitleRow.getCell(1).getStringCellValue().toLowerCase();
+        String courseThree = courseTitleRow.getCell(2).getStringCellValue().toLowerCase();
+        String courseFour = courseTitleRow.getCell(3).getStringCellValue().toLowerCase();
+        String courseFive = courseTitleRow.getCell(4).getStringCellValue().toLowerCase();
+        String courseSix = courseTitleRow.getCell(5).getStringCellValue().toLowerCase();
+        String courseSeven = courseTitleRow.getCell(6).getStringCellValue().toLowerCase();
+
+        System.out.println("course title: "+courseOne+" "+courseTwo+" "+courseThree+" "+courseFour+" "+courseFive+" "+courseSix+" "+courseSeven);
+        return classOne.contains("level") && classTwo.contains("class name") && classThree.contains("class size")
+                && classFour.contains("hasdisability") && classFive.contains("class courses")
+                && courseOne.contains("course code") && courseTwo.contains("course title")
+                && courseThree.contains("credit hours") && courseFour.contains("special venue")
+                && courseFive.contains("lecturer name") && courseSix.contains("lecturer email")
+                && courseSeven.contains("lecturer phone");
+
+    }
+    
+    
+    public Alert showAlert(String message,ButtonType submit,ButtonType cancel){
+       
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION, message, submit, cancel);
+                alert.initStyle(StageStyle.UNDECORATED);
+                alert.setHeaderText(null);
+                alert.getDialogPane().getStylesheets().add("/Styles/dialog.css");
+                
+                return alert;
     }
 }
