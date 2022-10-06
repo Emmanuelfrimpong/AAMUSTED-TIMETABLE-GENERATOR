@@ -17,7 +17,6 @@ import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
@@ -59,12 +58,7 @@ public class LoginPageController implements Initializable {
 
         tf_password.setText("Fk054840");
         tf_username.setText("admin");
-       
-        if (dbServices.databaseConnection() != null) {
-            dbServices.createConfigurations();
-        } else {
-            GF.inforAlert("Database Error", "Unable to Connect to Database Client", Alert.AlertType.ERROR);
-        }
+             
         bt_close.setOnMouseClicked(GF::closeWindow);
         //here we handle the minimize  button
         bt_minimize.setOnMouseClicked((Event event) -> {

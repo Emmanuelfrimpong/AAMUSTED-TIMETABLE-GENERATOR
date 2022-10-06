@@ -1,27 +1,32 @@
 package GlobalFunctions;
 
 import Controllers.ToastController;
+import Objects.ExcellHeaders;
+import aamusted.timetable.generator.AAMUSTEDTIMETABLEGENERATOR;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.stage.Screen;
@@ -51,9 +56,6 @@ public class GlobalFunctions {
     public void inforAlert(String title, String message, Alert.AlertType type) {
         Alert alert = new Alert(type);
         alert.setHeaderText(title);
-        alert.setGraphic(null);
-        alert.getDialogPane().getStylesheets().add("/Styles/dialogStyle.css");
-        alert.getDialogPane().setMinSize(400, 120);
         alert.setContentText(message);
         alert.show();
     }
@@ -98,7 +100,7 @@ public class GlobalFunctions {
             AnchorPane.setBottomAnchor(root, 0.0);
             container.getChildren().add(root);
         } catch (IOException ex) {
-            inforAlert("UI Error", ex.getMessage(), Alert.AlertType.ERROR);
+            Logger.getLogger(AAMUSTEDTIMETABLEGENERATOR.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -119,7 +121,6 @@ public class GlobalFunctions {
         });
         stage.initModality(Modality.APPLICATION_MODAL);
         stage.setScene(scene);
-        // stage.getIcons().add(new Image("/images/image-removebg-preview.png"));
         stage.showAndWait();
         Rectangle2D primScreenBounds = Screen.getPrimary().getVisualBounds();
         stage.setX((primScreenBounds.getWidth() - stage.getWidth()) / 2);
@@ -133,10 +134,9 @@ public class GlobalFunctions {
         String titleThree = titleRow.getCell(2).getStringCellValue().toLowerCase();
         String titleFour = titleRow.getCell(3).getStringCellValue().toLowerCase();
         String titleFive = titleRow.getCell(4).getStringCellValue().toLowerCase();
-        System.out
-                .println("title: " + titleOne + " " + titleTwo + " " + titleThree + " " + titleFour + " " + titleFive);
-        return titleOne.contains("level") && titleTwo.contains("class_name") && titleThree.contains("class_size")
-                && titleFour.contains("hasdisability") && titleFive.contains("class_courses");
+
+        return titleOne.equals(ExcellHeaders.getLevel()) && titleTwo.equals(ExcellHeaders.getClassName()) && titleThree.equals(ExcellHeaders.getClassSize())
+                && titleFour.equals(ExcellHeaders.getHasDisability()) && titleFive.equals(ExcellHeaders.getCourses());
 
     }
 
@@ -187,25 +187,61 @@ public class GlobalFunctions {
         String courseFive = courseTitleRow.getCell(4).getStringCellValue().toLowerCase();
         String courseSix = courseTitleRow.getCell(5).getStringCellValue().toLowerCase();
         String courseSeven = courseTitleRow.getCell(6).getStringCellValue().toLowerCase();
-
-        System.out.println("course title: "+courseOne+" "+courseTwo+" "+courseThree+" "+courseFour+" "+courseFive+" "+courseSix+" "+courseSeven);
-        return classOne.contains("level") && classTwo.contains("class name") && classThree.contains("class size")
-                && classFour.contains("hasdisability") && classFive.contains("class courses")
-                && courseOne.contains("course code") && courseTwo.contains("course title")
-                && courseThree.contains("credit hours") && courseFour.contains("special venue")
-                && courseFive.contains("lecturer name") && courseSix.contains("lecturer email")
-                && courseSeven.contains("lecturer phone");
+        return classOne.equals(ExcellHeaders.getLevel()) && classTwo.equals(ExcellHeaders.getClassName()) && classThree.equals(ExcellHeaders.getClassSize())
+                && classFour.equals(ExcellHeaders.getHasDisability()) && classFive.equals(ExcellHeaders.getCourses())
+                && courseOne.equals(ExcellHeaders.getCourseCode()) && courseTwo.equals(ExcellHeaders.getCouseTitle()) && courseThree.equals(ExcellHeaders.getCreaditHourse())
+                && courseFour.equals(ExcellHeaders.getSpecialVenue()) && courseFive.equals(ExcellHeaders.getLecturerName()) && courseSix.equals(ExcellHeaders.getLecturerEmail())
+                && courseSeven.equals(ExcellHeaders.getLecturerPhone());
 
     }
-    
-    
-    public Alert showAlert(String message,ButtonType submit,ButtonType cancel){
-       
-                Alert alert = new Alert(Alert.AlertType.CONFIRMATION, message, submit, cancel);
-                alert.initStyle(StageStyle.UNDECORATED);
-                alert.setHeaderText(null);
-                alert.getDialogPane().getStylesheets().add("/Styles/dialog.css");
-                
-                return alert;
+
+    public Alert showAlert(String message, ButtonType submit, ButtonType cancel) {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION, message, submit, cancel);
+        alert.initStyle(StageStyle.UNDECORATED);
+        alert.setHeaderText(null);
+        alert.getDialogPane().getStylesheets().add("/Styles/dialog.css");
+
+        return alert;
+    }
+
+    public Stage LoadingDailog(String message) {
+        Stage loadingStage = new Stage();
+        RingProgressIndicator indicator = new RingProgressIndicator();
+        indicator.makeIndeterminate();
+        Screen screen = Screen.getPrimary();
+        Rectangle2D bounds = screen.getVisualBounds();
+        VBox cont = new VBox();
+        cont.setAlignment(Pos.CENTER);
+        Label lb = new Label(message);
+        cont.getChildren().addAll(indicator, lb);
+        Scene scene = new Scene(cont);
+        loadingStage.setX(bounds.getMinX());
+        loadingStage.setY(bounds.getMinY());
+        loadingStage.setWidth(bounds.getWidth());
+        loadingStage.setHeight(bounds.getHeight());
+        loadingStage.setOpacity(0.95);
+        loadingStage.setResizable(false);
+        loadingStage.initStyle(StageStyle.UNDECORATED);
+        loadingStage.initStyle(StageStyle.TRANSPARENT);
+        scene.setFill(Color.TRANSPARENT);
+        loadingStage.setScene(scene);
+
+        return loadingStage;
+
+    }
+
+    public boolean verifyAfricanSheet(Row courseTitleRow) {
+        String courseOne = courseTitleRow.getCell(0).getStringCellValue().toLowerCase();
+        String courseTwo = courseTitleRow.getCell(1).getStringCellValue().toLowerCase();
+        String courseThree = courseTitleRow.getCell(2).getStringCellValue().toLowerCase();
+        String courseFour = courseTitleRow.getCell(3).getStringCellValue().toLowerCase();
+        String courseFive = courseTitleRow.getCell(4).getStringCellValue().toLowerCase();
+        String courseSix = courseTitleRow.getCell(5).getStringCellValue().toLowerCase();
+        String courseSeven = courseTitleRow.getCell(6).getStringCellValue().toLowerCase();
+
+        return courseOne.equals(ExcellHeaders.getCourseCode()) && courseTwo.equals(ExcellHeaders.getCouseTitle()) && courseThree.equals(ExcellHeaders.getCreaditHourse())
+                && courseFour.equals(ExcellHeaders.getSpecialVenue()) && courseFive.equals(ExcellHeaders.getLecturerName()) && courseSix.equals(ExcellHeaders.getLecturerEmail())
+                && courseSeven.equals(ExcellHeaders.getLecturerPhone());
+
     }
 }

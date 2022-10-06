@@ -1,17 +1,26 @@
 package Controllers;
 
 import GlobalFunctions.GlobalFunctions;
+import MongoServices.DatabaseServices;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.event.Event;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 /**
  * FXML Controller class
@@ -24,7 +33,7 @@ public class MainPageController implements Initializable {
     private ImageView bt_minimize;
     @FXML
     private ImageView bt_close;
-    
+
     @FXML
     private VBox menu_data;
     @FXML
@@ -41,11 +50,17 @@ public class MainPageController implements Initializable {
     private StackPane center_container;
 
     GlobalFunctions GF = new GlobalFunctions();
+    DatabaseServices DBservices = new DatabaseServices();
+
+    private static double xOffset = 0;
+    private static double yOffset = 0;
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+
         GF.getTime(lb_time);
         GF.sideBarClick(center_container, "/FrontEnds/DatasetPage.fxml");
-         menu_data.setStyle("-fx-background-color: #AC637C");
+        menu_data.setStyle("-fx-background-color: #AC637C");
         bt_close.setOnMouseClicked(GF::closeWindow);
 
         //here we handle the minimize  button
@@ -53,6 +68,7 @@ public class MainPageController implements Initializable {
             Stage thisStage = (Stage) bt_minimize.getScene().getWindow();
             thisStage.setIconified(true);
         });
+         
     }
 
 //   
@@ -92,5 +108,7 @@ public class MainPageController implements Initializable {
     @FXML
     private void logUserOut(MouseEvent event) {
     }
+
+
 
 }

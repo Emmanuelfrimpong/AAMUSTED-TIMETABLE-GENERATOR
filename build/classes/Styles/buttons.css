@@ -65,7 +65,7 @@
 }
 
 .combo-box-base:editable{
-    -fx-background-color: #83163B;
+    -fx-background-color: #ffffff;
 }
 
 .combo-box-base:editable > .text-field {
@@ -80,7 +80,7 @@
   }
 
 .combo-box-base > .arrow-button > .arrow {
-    -fx-background-color: black;
+    -fx-background-color: white;
     -fx-background-insets: 0 0 0 0;
     -fx-padding: 2 4;
     -fx-shape: "M 0 0 H 7 L 3.5 4 z";
@@ -95,7 +95,7 @@
 }
 .combo-box-popup > .list-view > .virtual-flow > .clipped-container > .sheet > .list-cell {
     -fx-padding: 1 10;
-    -fx-background: #83163B;
+    -fx-background: #ffffff;
 }
 .combo-box-popup > .list-view > .virtual-flow > .clipped-container > .sheet > .list-cell:filled:selected {
     -fx-background: green;

@@ -34,11 +34,11 @@
                                     <TableView fx:id="tb_studnts" prefHeight="200.0" prefWidth="200.0" styleClass="mainFxmlClass">
                                        <columns>
                                           <TableColumn fx:id="col_level" editable="false" maxWidth="100.0" minWidth="100.0" prefWidth="75.0" style="-fx-alignment: CENTER;" text="Level" />
-                                          <TableColumn fx:id="col_className" maxWidth="150.0" minWidth="120.0" prefWidth="75.0" text="Class Name" />
-                                          <TableColumn fx:id="col_department" editable="false" maxWidth="250.0" minWidth="200.0" prefWidth="75.0" text="Department" />
+                                          <TableColumn fx:id="col_className" maxWidth="150.0" minWidth="150.0" prefWidth="75.0" text="Class Name" />
+                                          <TableColumn fx:id="col_department" editable="false" minWidth="200.0" prefWidth="75.0" text="Department" />
                                           <TableColumn fx:id="col_size" editable="false" maxWidth="90.0" minWidth="90.0" prefWidth="75.0" style="-fx-alignment: CENTER;" text="Class Size" />
                                           <TableColumn fx:id="col_disability" editable="false" maxWidth="120.0" minWidth="120.0" prefWidth="97.0" style="-fx-alignment: CENTER;" text="With Disability" />
-                                          <TableColumn fx:id="col_courses" editable="false" prefWidth="137.0" text="Courses(Seperated (,))" />
+                                          <TableColumn fx:id="col_courses" editable="false" minWidth="200.0" prefWidth="137.0" text="Courses(Seperated (,))" />
                                           <TableColumn fx:id="col_edit" editable="false" maxWidth="60.0" minWidth="60.0" prefWidth="70.0" style="-fx-alignment: CENTER;" text="Edit" />
                                           <TableColumn fx:id="col_delete" editable="false" maxWidth="60.0" minWidth="60.0" prefWidth="70.0" style="-fx-alignment: CENTER;" text="Delete" />
                                        </columns>
@@ -61,7 +61,7 @@
                                     <TableView fx:id="tb_courses" prefHeight="200.0" prefWidth="200.0" styleClass="mainFxmlClass">
                                        <columns>
                                           <TableColumn fx:id="col_code" editable="false" maxWidth="100.0" minWidth="100.0" prefWidth="75.0" style="-fx-alignment: CENTER;" text="Course Code" />
-                                          <TableColumn fx:id="col_title" editable="false" maxWidth="300.0" minWidth="100.0" prefWidth="75.0" text="Course Title" />
+                                          <TableColumn fx:id="col_title" editable="false" minWidth="200.0" prefWidth="75.0" text="Course Title" />
                                           <TableColumn fx:id="col_hours" editable="false" maxWidth="120.0" minWidth="120.0" prefWidth="75.0" style="-fx-alignment: CENTER;" text="Credit Hours" />
                                           <TableColumn fx:id="col_venue" editable="false" maxWidth="150.0" minWidth="150.0" prefWidth="75.0" text="Special Venue" />
                                           <TableColumn fx:id="col_lecturer" editable="false" prefWidth="137.0" text="Lecturer">
@@ -95,7 +95,12 @@
                         <Insets right="20.0" />
                      </HBox.margin>
                   </TextField>
-                  <JFXButton fx:id="btn_import" onAction="#handleImport" prefHeight="28.0" prefWidth="139.0" ripplerFill="#6f1717" styleClass="altButton" stylesheets="@../Styles/buttons.css" text="Import From Excel" textAlignment="CENTER" />
+                  <JFXButton fx:id="btn_import" onAction="#handleImport" prefHeight="28.0" prefWidth="139.0" ripplerFill="#6f1717" stylesheets="@../Styles/buttons.css" text="Import From Excel" textAlignment="CENTER" />
+                  <JFXButton fx:id="btn_download" layoutX="921.0" layoutY="15.0" onAction="#handleDownload" prefHeight="28.0" prefWidth="170.0" ripplerFill="#6f1717" stylesheets="@../Styles/buttons.css" text="Download Template" textAlignment="CENTER">
+                     <HBox.margin>
+                        <Insets left="15.0" right="15.0" />
+                     </HBox.margin>
+                  </JFXButton>
                   <JFXButton fx:id="btn_addNew" onAction="#handleAddNew" prefHeight="37.0" prefWidth="139.0" ripplerFill="#6f1717" stylesheets="@../Styles/buttons.css" text="Add New " textAlignment="CENTER">
                      <HBox.margin>
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />

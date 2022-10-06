@@ -1,16 +1,20 @@
 package Controllers;
 
 import GlobalFunctions.ActionButtonTableCell;
+import GlobalFunctions.ExcelServices;
 import GlobalFunctions.GlobalFunctions;
 import MongoServices.DatabaseServices;
 import Objects.CoursesObject;
 import Objects.StudentsObject;
 import com.jfoenix.controls.JFXButton;
+import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.ObservableMap;
@@ -33,6 +37,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javax.swing.JFileChooser;
 
 /**
  * FXML Controller class
@@ -80,7 +85,7 @@ public class DepartmentFilesController implements Initializable {
     private TableColumn<CoursesObject, String> col_venue;
     @FXML
     private TableColumn<?, ?> col_lecturer;
-   
+
     @FXML
     private TableColumn<CoursesObject, String> col_email;
     @FXML
@@ -92,13 +97,17 @@ public class DepartmentFilesController implements Initializable {
 
     private ObservableList<StudentsObject> studentsData;
     private ObservableList<CoursesObject> coursesData;
-    private ObservableList<StudentsObject> selectectData;
+
     DatabaseServices DBservices = new DatabaseServices();
     FileChooser fileChooser = new FileChooser();
     ObservableMap<String, Object> data;
     GlobalFunctions GF = new GlobalFunctions();
     @FXML
     private TableColumn<CoursesObject, String> col_lectName;
+    @FXML
+    private JFXButton btn_download;
+
+    private ExcelServices ES = new ExcelServices();
 
     /**
      * Initializes the controller class.
@@ -110,25 +119,17 @@ public class DepartmentFilesController implements Initializable {
 
     @FXML
     private void handleImport(ActionEvent event) {
-
         fileChooser.getExtensionFilters().addAll(
                 new FileChooser.ExtensionFilter("Excel Files", "*.xlsx"),
                 new FileChooser.ExtensionFilter("Excel Files", "*.xls")
         );
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         File selectedFile = fileChooser.showOpenDialog(stage);
-        if (selectedFile.exists()) {
+        if (selectedFile != null && selectedFile.exists()) {
             try {
                 ObservableMap<String, Object> incomingData = DBservices.LoadStudentsToDatabase(selectedFile);
-                System.out.println("data: " + incomingData.toString());
-                if ((boolean) incomingData.get("isSaved")) {
-                    DBservices.CreateClassCoursePair();
-                    
+                if ((boolean) incomingData.get("isSaved")) {                 
                     getDepartmentData();
-                    if (incomingData.get("stage") != null) {
-                        Stage loading = (Stage) incomingData.get("stage");
-                        loading.close();
-                    }
                     GF.showToast("Data saved Succefully", stage);
                 }
 
@@ -145,6 +146,7 @@ public class DepartmentFilesController implements Initializable {
 
     @FXML
     private void handleRfresh(MouseEvent event) {
+        getDepartmentData();
     }
 
     void getDepartmentData() {
@@ -247,6 +249,17 @@ public class DepartmentFilesController implements Initializable {
         tb_courses.setItems(null);
         tb_courses.setItems(courseData);
         tb_courses.getSelectionModel().clearSelection();
+    }
+
+    @FXML
+    private void handleDownload(ActionEvent event) {
+        final String folder = new JFileChooser().getFileSystemView().getDefaultDirectory().toString() + "/TIME TABLE GEN";
+        ES.ExportDepartment();    
+        try {
+                Desktop.getDesktop().open(new File(folder));
+            } catch (IOException ex) {
+                Logger.getLogger(DepartmentFilesController.class.getName()).log(Level.SEVERE, null, ex);
+            }
     }
 
 }

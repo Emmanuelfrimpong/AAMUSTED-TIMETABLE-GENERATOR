@@ -16,6 +16,7 @@ public class CoursesObject {
     String lecturerName;
     String lecturerEmail;
     String lecturerPhone;
+    String department;
     ObjectId _id;
 
     public CoursesObject() {
@@ -85,8 +86,18 @@ public class CoursesObject {
         this._id = _id;
     }
 
+    public String getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(String department) {
+        this.department = department;
+    }
+
+    
+    
     public CoursesObject(String code, String title, String creditHours, String specialVenue, String lecturerName,
-            String lecturerEmail, String lecturerPhone, ObjectId _id) {
+            String lecturerEmail, String lecturerPhone, ObjectId _id, String dep) {
         this.code = code;
         this.title = title;
         this.creditHours = creditHours;
@@ -95,6 +106,7 @@ public class CoursesObject {
         this.lecturerEmail = lecturerEmail;
         this.lecturerPhone = lecturerPhone;
         this._id = _id;
+        this.department=dep;
     }
 
     public Document toDocument() {
@@ -107,6 +119,7 @@ public class CoursesObject {
         doc.put("lecturerEmail", lecturerEmail);
         doc.put("lecturerPhone", lecturerPhone);
         doc.put("_id", _id);
+        doc.put("department", department);
         return doc;
     }
 
@@ -120,6 +133,8 @@ public class CoursesObject {
         obj.setLecturerEmail(doc.getString("lecturerEmail"));
         obj.setLecturerPhone(doc.getString("lecturerPhone"));
         obj.setId(doc.getObjectId("_id"));
+        obj.setDepartment(doc.getString("department"));
+ 
         return obj;
     }
 
