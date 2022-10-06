@@ -3,6 +3,7 @@ package Controllers;
 import GlobalFunctions.ActionButtonTableCell;
 import GlobalFunctions.ExcelServices;
 import GlobalFunctions.GlobalFunctions;
+import GlobalFunctions.LoadingDailog;
 import MongoServices.DatabaseServices;
 import Objects.CoursesObject;
 import Objects.StudentsObject;
@@ -13,6 +14,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.collections.FXCollections;
@@ -22,6 +24,8 @@ import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
@@ -128,7 +132,7 @@ public class DepartmentFilesController implements Initializable {
         if (selectedFile != null && selectedFile.exists()) {
             try {
                 ObservableMap<String, Object> incomingData = DBservices.LoadStudentsToDatabase(selectedFile);
-                if ((boolean) incomingData.get("isSaved")) {                 
+                if ((boolean) incomingData.get("isSaved")) {
                     getDepartmentData();
                     GF.showToast("Data saved Succefully", stage);
                 }
@@ -150,7 +154,7 @@ public class DepartmentFilesController implements Initializable {
     }
 
     void getDepartmentData() {
-
+        LoadingDailog loading = new LoadingDailog("Getting Data........");
         data = FXCollections.observableHashMap();
         studentsData = FXCollections.observableArrayList();
         coursesData = FXCollections.observableArrayList();
@@ -165,7 +169,9 @@ public class DepartmentFilesController implements Initializable {
                 };
             }
         };
+        service.setOnRunning((WorkerStateEvent event) -> loading.show());
         service.setOnSucceeded((WorkerStateEvent event) -> {
+            loading.close();
             data = service.getValue();
             studentsData = (ObservableList<StudentsObject>) data.get("classes");
             coursesData = (ObservableList<CoursesObject>) data.get("courses");
@@ -253,13 +259,32 @@ public class DepartmentFilesController implements Initializable {
 
     @FXML
     private void handleDownload(ActionEvent event) {
-        final String folder = new JFileChooser().getFileSystemView().getDefaultDirectory().toString() + "/TIME TABLE GEN";
-        ES.ExportDepartment();    
-        try {
-                Desktop.getDesktop().open(new File(folder));
-            } catch (IOException ex) {
+        LoadingDailog loading = new LoadingDailog("Downloading........");
+        Task<String> task = new Task<String>() {
+            @Override
+            public String call() {
+                ES.ExportDepartment();
+                return new JFileChooser().getFileSystemView().getDefaultDirectory().toString() + "/TIME TABLE GEN";
+            }
+        };
+        task.setOnFailed((e) -> {
+            loading.close();
+        });
+
+        task.setOnRunning((e) -> loading.show());
+        task.setOnSucceeded((e) -> {
+            loading.close();
+            try {
+                String file = task.get();
+                if (new File(file).exists()) {
+                    Desktop.getDesktop().open(new File(file));
+                }
+            } catch (IOException | InterruptedException | ExecutionException ex) {
                 Logger.getLogger(DepartmentFilesController.class.getName()).log(Level.SEVERE, null, ex);
             }
+
+        });
+        new Thread(task).start();
     }
 
 }

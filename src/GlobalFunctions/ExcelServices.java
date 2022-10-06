@@ -50,7 +50,7 @@ public class ExcelServices {
         ButtonType submit = new ButtonType("Submit Data", ButtonBar.ButtonData.OK_DONE);
         ButtonType cancel = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
         Dialog<String> dialog = new Dialog<>();
-        dialog.setHeaderText("Select Department and proceed to save data");
+        dialog.setHeaderText("Select Source of file and proceed");
         DialogPane dialogPane = dialog.getDialogPane();
         dialog.initStyle(StageStyle.UNDECORATED);
         dialogPane.getStylesheets().add("/Styles/dialogStyle.css");
