@@ -1,18 +1,17 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/javafx/FXMLController.java to edit this template
- */
+
 package Controllers;
 
 import GlobalFunctions.GlobalFunctions;
+import GlobalFunctions.LoadingDailog;
 import MongoServices.DatabaseServices;
 import Objects.Configuration;
 import Objects.CoursesObject;
+import Objects.DaysObject;
 import Objects.PeriodsObject;
 import Objects.SpecialVenue;
-import Objects.StudentsObject;
 import Objects.Venue;
 import com.jfoenix.controls.JFXComboBox;
+import com.mongodb.client.MongoCursor;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -21,12 +20,16 @@ import java.util.ResourceBundle;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.ObservableMap;
+import javafx.concurrent.Service;
+import javafx.concurrent.Task;
+import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
+
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ContextMenu;
@@ -36,7 +39,6 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
-import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.bson.Document;
 
@@ -124,12 +126,80 @@ public class SettingsPageController implements Initializable {
     private Label lab_period;
 
     boolean liberalCourseExist = false;
+    @FXML
+    private Button btn_clear;
+    @FXML
+    private CheckBox monREG;
+    @FXML
+    private CheckBox monEVE;
+    @FXML
+    private CheckBox monWND;
+    @FXML
+    private CheckBox tueREG;
+    @FXML
+    private CheckBox tueEVE;
+    @FXML
+    private CheckBox tueWND;
+    @FXML
+    private CheckBox wedEVE;
+    @FXML
+    private CheckBox wedWND;
+    @FXML
+    private CheckBox thuREG;
+    @FXML
+    private CheckBox thuEVE;
+    @FXML
+    private CheckBox thuWND;
+    @FXML
+    private CheckBox friREG;
+    @FXML
+    private CheckBox friEVE;
+    @FXML
+    private CheckBox friWND;
+    @FXML
+    private CheckBox satREG;
+    @FXML
+    private CheckBox satEVE;
+    @FXML
+    private CheckBox satWND;
+    @FXML
+    private CheckBox sunREG;
+    @FXML
+    private CheckBox sunEVE;
+    @FXML
+    private CheckBox sunWND;
+    @FXML
+    private CheckBox firstREG;
+    @FXML
+    private CheckBox firstEVE;
+    @FXML
+    private CheckBox firstWND;
+    @FXML
+    private CheckBox secondREG;
+    @FXML
+    private CheckBox secondEVE;
+    @FXML
+    private CheckBox thirdREG;
+    @FXML
+    private CheckBox thirdEVE;
+    @FXML
+    private CheckBox forthEVE;
+    @FXML
+    private CheckBox forthREG;
+    @FXML
+    private CheckBox forthWND;
+    @FXML
+    private CheckBox secondWND;
+    @FXML
+    private CheckBox thirdWND;
+    @FXML
+    private CheckBox wedREG;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         List<String> time = new ArrayList<>();
         int after = 1;
-        for (int i = 5; i < 21; i++) {
+        for (int i = 5; i < 23; i++) {
             if (i < 12) {
                 time.add(i + " am");
             } else if (i == 12) {
@@ -173,7 +243,7 @@ public class SettingsPageController implements Initializable {
                 AllCourses.add(course);
                 if (!"no".equals(course.getSpecialVenue().trim().toLowerCase())) {
                     coursesData.add(course);
-                    cm_course.getItems().add(course.getTitle() + " - (" + course.getCode() + ")");
+                    cm_course.getItems().add(course.getTitle() + " - " + course.getCode());
                 }
             }
         }
@@ -197,17 +267,23 @@ public class SettingsPageController implements Initializable {
                 cm_LAperiod.setVisible(true);
                 lab_period.setVisible(true);
             }
-            List<String> days = config.getDays();
+            List<ObservableMap<String, Object>> days = config.getDays();
             List<ObservableMap<String, Object>> periods = config.getPeriods();
-            for (Iterator<ObservableMap<String, Object>> it = periods.iterator(); it.hasNext();) {
-                Document ob = (Document) it.next();
-                PeriodsObject PO = PeriodsObject.getSpecialVenueFromDoc(ob);
+            for (int i=0;i<periods.size();i++) {    
+                Document doc=(Document)periods.get(i);     
+                PeriodsObject PO = PeriodsObject.fromDocument(doc);
                 if (PO.getPeriod().equals("1st Period")) {
                     firstStart.getSelectionModel().select(PO.getStartTime());
                     firstEnd.getSelectionModel().select(PO.getEndTime());
                     firstP.setSelected(true);
                     firstStart.setVisible(true);
                     firstEnd.setVisible(true);
+                    firstREG.setSelected(PO.isReg());
+                    firstREG.setVisible(true);
+                    firstEVE.setSelected(PO.isEve());
+                    firstEVE.setVisible(true);
+                    firstWND.setSelected(PO.isWnd());
+                    firstWND.setVisible(true);
                 }
 
                 if (PO.getPeriod().equals("2nd Period")) {
@@ -216,6 +292,12 @@ public class SettingsPageController implements Initializable {
                     secondP.setSelected(true);
                     secondStart.setVisible(true);
                     secondEnd.setVisible(true);
+                    secondREG.setSelected(PO.isReg());
+                    secondREG.setVisible(true);
+                    secondEVE.setSelected(PO.isEve());
+                    secondEVE.setVisible(true);
+                    secondWND.setSelected(PO.isWnd());
+                    secondWND.setVisible(true);
                 }
 
                 if (PO.getPeriod().equals("3rd Period")) {
@@ -224,6 +306,12 @@ public class SettingsPageController implements Initializable {
                     thirdP.setSelected(true);
                     thirdStart.setVisible(true);
                     thirdEnd.setVisible(true);
+                    thirdREG.setSelected(PO.isReg());
+                    thirdREG.setVisible(true);
+                    thirdEVE.setSelected(PO.isEve());
+                    thirdEVE.setVisible(true);
+                    thirdWND.setSelected(PO.isWnd());
+                    thirdWND.setVisible(true);
                 }
 
                 if (PO.getPeriod().equals("4th Period")) {
@@ -232,6 +320,12 @@ public class SettingsPageController implements Initializable {
                     fourthP.setSelected(true);
                     fourthStart.setVisible(true);
                     fourthEnd.setVisible(true);
+                    forthREG.setSelected(PO.isReg());
+                    forthREG.setVisible(true);
+                    forthEVE.setSelected(PO.isEve());
+                    forthEVE.setVisible(true);
+                    forthWND.setSelected(PO.isWnd());
+                    forthWND.setVisible(true);
                 }
             }
             List<ObservableMap<String, Object>> specialVenue = config.getSpecialVenue();
@@ -245,27 +339,79 @@ public class SettingsPageController implements Initializable {
 
             }
             if (days != null) {
-                if (days.contains("Monday")) {
-                    checkMonday.setSelected(true);
-                }
-                if (days.contains("Tuesday")) {
-                    checkTuesday.setSelected(true);
-                }
-                if (days.contains("Wednesday")) {
-                    checkWednesday.setSelected(true);
-                }
-                if (days.contains("Thursday")) {
-                    checkThursday.setSelected(true);
-                }
-                if (days.contains("Friday")) {
-                    checkFriday.setSelected(true);
-                }
-                if (days.contains("Saturday")) {
-                    checkSaturday.setSelected(true);
-                }
-                if (days.contains("Sunday")) {
-                    checkSunday.setSelected(true);
-                }
+                for (int j=0;j<days.size();j++) {
+                    Document doc=(Document)days.get(j);
+                    DaysObject day = DaysObject.fromDocument(doc);
+                    if (day.getDay().equals("Monday")) {
+                        checkMonday.setSelected(true);
+                        monREG.setVisible(true);
+                        monEVE.setVisible(true);
+                        monWND.setVisible(true);
+                        monREG.setSelected(day.isReg());
+                        monEVE.setSelected(day.isEve());
+                        monWND.setSelected(day.isWnd());
+                    }
+
+                    if(day.getDay().equals("Tuesday")){
+                        checkTuesday.setSelected(true);
+                        tueREG.setVisible(true);
+                        tueEVE.setVisible(true);
+                        tueWND.setVisible(true);
+                        tueREG.setSelected(day.isReg());
+                        tueEVE.setSelected(day.isEve());
+                        tueWND.setSelected(day.isWnd());
+                    }
+
+                    if(day.getDay().equals("Wednesday")){
+                        checkWednesday.setSelected(true);
+                        wedREG.setVisible(true);
+                        wedEVE.setVisible(true);
+                        wedWND.setVisible(true);
+                        wedREG.setSelected(day.isReg());
+                        wedEVE.setSelected(day.isEve());
+                        wedWND.setSelected(day.isWnd());
+                    }
+
+                    if(day.getDay().equals("Thursday")){
+                        checkThursday.setSelected(true);
+                        thuREG.setVisible(true);
+                        thuEVE.setVisible(true);
+                        thuWND.setVisible(true);
+                        thuREG.setSelected(day.isReg());
+                        thuEVE.setSelected(day.isEve());
+                        thuWND.setSelected(day.isWnd());
+                    }
+
+                    if(day.getDay().equals("Friday")){
+                        checkFriday.setSelected(true);
+                        friREG.setVisible(true);
+                        friEVE.setVisible(true);
+                        friWND.setVisible(true);
+                        friREG.setSelected(day.isReg());
+                        friEVE.setSelected(day.isEve());
+                        friWND.setSelected(day.isWnd());
+                    }
+
+                    if(day.getDay().equals("Saturday")){
+                        checkSaturday.setSelected(true);
+                        satREG.setVisible(true);
+                        satEVE.setVisible(true);
+                        satWND.setVisible(true);
+                        satREG.setSelected(day.isReg());
+                        satEVE.setSelected(day.isEve());
+                        satWND.setSelected(day.isWnd());
+                    }
+
+                    if(day.getDay().equals("Sunday")){
+                        checkSunday.setSelected(true);
+                        sunREG.setVisible(true);
+                        sunEVE.setVisible(true);
+                        sunWND.setVisible(true);
+                        sunREG.setSelected(day.isReg());
+                        sunEVE.setSelected(day.isEve());
+                        sunWND.setSelected(day.isWnd());
+                    }
+                }        
             }
 
         }
@@ -273,10 +419,12 @@ public class SettingsPageController implements Initializable {
 
     @FXML
     private void onSaveConfig(ActionEvent event) {
+        LoadingDailog loading = new LoadingDailog("Saving Configurations........");
         Stage stage = (Stage) btn_save.getScene().getWindow();
         if (getSelectedPeriod() != null && !getSelectedPeriod().isEmpty()) {
             config.setPeriods(getSelectedPeriod());
-            if (config.getDays() != null && !config.getDays().isEmpty()) {
+            if (handleDaySelect() != null && !handleDaySelect().isEmpty()) {
+                config.setDays(handleDaySelect());
                 if (checkSpecailVenue() != null) {
                     config.setSpecialVenue(checkSpecailVenue());
 
@@ -290,145 +438,163 @@ public class SettingsPageController implements Initializable {
                             config.setLaDay("No Libral/African Studies");
                             config.setLaPeriod("");
                         }
-                        DBservices.saveConfig(config);
-                        GF.inforAlert("Data Saved", "Configuration Successfully Saved", Alert.AlertType.INFORMATION);
-                        loadConfig();
+                        Service<List<MongoCursor<Document>>> service = new Service<List<MongoCursor<Document>>>() {
+                            @Override
+                            protected Task<List<MongoCursor<Document>>> createTask() {
+                                return new Task<List<MongoCursor<Document>>>() {
+                                    @Override
+                                    protected List<MongoCursor<Document>> call() throws Exception {
+                                        return DBservices.saveConfig(config); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+                                    }
+                                };
+
+                            }
+                        };
+
+                        service.setOnFailed((WorkerStateEvent evt) -> {
+                            System.out.println("Failed==========================================");
+                            loading.close();
+
+                        });
+                        service.setOnRunning((WorkerStateEvent evt) -> loading.show());
+                        service.setOnSucceeded((WorkerStateEvent evt) -> {
+                            loading.close();
+                            GF.showToast("Configuration Successfully Saved", stage);
+                            loadConfig();
+                        });
+                        service.start();
+
                         //Save the file
                     } else {
                         GF.inforAlert("Incomplete Data", "Please set Day and Period for Liberal Course", Alert.AlertType.ERROR);
                     }
 
                 }
+
             } else {
                 GF.inforAlert("Incomplete Data", "At Least a Day Should be Selected", Alert.AlertType.ERROR);
             }
-
         } else {
             GF.inforAlert("Incomplete Data", "At Least a Period Should be Added", Alert.AlertType.ERROR);
         }
     }
 
-    public void setLocation(String new_Stage) {
-        this.location = new_Stage;
-        if (this.location != null && !this.location.isEmpty()) {
-            btn_clse.setVisible(true);
-        }
-    }
-
-    private void handleMouseDrag(MouseEvent event) {
-        if (!this.location.isEmpty()) {
-            Node node = (Node) event.getSource();
-            Stage stage = (Stage) node.getScene().getWindow();
-            if (stage != null) {
-                stage.setX(event.getScreenX() + xOffset[0]);
-                stage.setY(event.getScreenY() + yOffset[0]);
-            }
-        }
-    }
-
-    private void handleMousePress(MouseEvent event) {
-        if (!this.location.isEmpty()) {
-            Node node = (Node) event.getSource();
-            Stage stage = (Stage) node.getScene().getWindow();
-            if (stage != null) {
-                xOffset[0] = stage.getX() - event.getScreenX();
-                yOffset[0] = stage.getY() - event.getScreenY();
-            }
-        }
-    }
-
-    private void handleClose(ActionEvent event) {
-        GF.closeWindow(event);
-    }
-
+ 
     @FXML
     private void HandleMondaySelect(ActionEvent event) {
         if (checkMonday.isSelected()) {
-            if (config.getDays() != null && !config.getDays().contains("Monday")) {
-                config.getDays().add("Monday");
-            }
+            monREG.setVisible(true);
+            monEVE.setVisible(true);
+            monWND.setVisible(true);
+
         } else {
-            if (config.getDays().contains("Monday")) {
-                config.getDays().remove("Monday");
-            }
+
+            monREG.setVisible(false);
+            monEVE.setVisible(false);
+            monWND.setVisible(false);
+
         }
     }
 
     @FXML
     private void HandleTuesdaySelect(ActionEvent event) {
         if (checkTuesday.isSelected()) {
-            if (!config.getDays().contains("Tuesday")) {
-                config.getDays().add("Tuesday");
-            }
+
+            tueREG.setVisible(true);
+            tueEVE.setVisible(true);
+            tueWND.setVisible(true);
+
         } else {
-            if (config.getDays().contains("Tuesday")) {
-                config.getDays().remove("Tuesday");
-            }
+
+            tueREG.setVisible(false);
+            tueEVE.setVisible(false);
+            tueWND.setVisible(false);
+
         }
     }
 
     @FXML
     private void HandleWednesdaySelect(ActionEvent event) {
         if (checkWednesday.isSelected()) {
-            if (!config.getDays().contains("Wednesday")) {
-                config.getDays().add("Wednesday");
-            }
+
+            wedREG.setVisible(true);
+            wedEVE.setVisible(true);
+            wedWND.setVisible(true);
+
         } else {
-            if (config.getDays().contains("Wednesday")) {
-                config.getDays().remove("Wednesday");
-            }
+
+            wedREG.setVisible(false);
+            wedEVE.setVisible(false);
+            wedWND.setVisible(false);
+
         }
     }
 
     @FXML
     private void HandleThursdaySelect(ActionEvent event) {
         if (checkThursday.isSelected()) {
-            if (!config.getDays().contains("Thursday")) {
-                config.getDays().add("Thursday");
-            }
+
+            thuREG.setVisible(true);
+            thuEVE.setVisible(true);
+            thuWND.setVisible(true);
+
         } else {
-            if (config.getDays().contains("Thursday")) {
-                config.getDays().remove("Thursday");
-            }
+
+            thuREG.setVisible(false);
+            thuEVE.setVisible(false);
+            thuWND.setVisible(false);
+
         }
     }
 
     @FXML
     private void HandleFridaySelect(ActionEvent event) {
         if (checkFriday.isSelected()) {
-            if (!config.getDays().contains("Friday")) {
-                config.getDays().add("Friday");
-            }
+
+            friREG.setVisible(true);
+            friEVE.setVisible(true);
+            friWND.setVisible(true);
+
         } else {
-            if (config.getDays().contains("Friday")) {
-                config.getDays().remove("Friday");
-            }
+
+            friREG.setVisible(false);
+            friEVE.setVisible(false);
+            friWND.setVisible(false);
+
         }
     }
 
     @FXML
     private void HandleSaturdaySelect(ActionEvent event) {
         if (checkSaturday.isSelected()) {
-            if (!config.getDays().contains("Saturday")) {
-                config.getDays().add("Saturday");
-            }
+
+            satREG.setVisible(true);
+            satEVE.setVisible(true);
+            satWND.setVisible(true);
+
         } else {
-            if (config.getDays().contains("Saturday")) {
-                config.getDays().remove("Saturday");
-            }
+
+            satREG.setVisible(false);
+            satEVE.setVisible(false);
+            satWND.setVisible(false);
+
         }
     }
 
     @FXML
     private void HandleSundaySelect(ActionEvent event) {
         if (checkSunday.isSelected()) {
-            if (!config.getDays().contains("Sunday")) {
-                config.getDays().add("Sunday");
-            }
+
+            sunREG.setVisible(true);
+            sunEVE.setVisible(true);
+            sunWND.setVisible(true);
+
         } else {
-            if (config.getDays().contains("Sunday")) {
-                config.getDays().remove("Sunday");
-            }
+
+            sunREG.setVisible(false);
+            sunEVE.setVisible(false);
+            sunWND.setVisible(false);
+
         }
     }
 
@@ -437,10 +603,16 @@ public class SettingsPageController implements Initializable {
         if (firstP.isSelected()) {
             firstStart.setVisible(true);
             firstEnd.setVisible(true);
+            firstREG.setVisible(true);
+            firstEVE.setVisible(true);
+            firstWND.setVisible(true);
 
         } else {
             firstStart.setVisible(false);
             firstEnd.setVisible(false);
+            firstREG.setVisible(false);
+            firstEVE.setVisible(false);
+            firstWND.setVisible(false);
 
         }
 
@@ -451,10 +623,16 @@ public class SettingsPageController implements Initializable {
         if (secondP.isSelected()) {
             secondStart.setVisible(true);
             secondEnd.setVisible(true);
+            secondREG.setVisible(true);
+            secondEVE.setVisible(true);
+            secondWND.setVisible(true);
 
         } else {
             secondStart.setVisible(false);
             secondEnd.setVisible(false);
+            secondREG.setVisible(false);
+            secondEVE.setVisible(false);
+            secondWND.setVisible(false);
 
         }
     }
@@ -464,9 +642,15 @@ public class SettingsPageController implements Initializable {
         if (thirdP.isSelected()) {
             thirdStart.setVisible(true);
             thirdEnd.setVisible(true);
+            thirdREG.setVisible(true);
+            thirdEVE.setVisible(true);
+            thirdWND.setVisible(true);
         } else {
             thirdStart.setVisible(false);
             thirdEnd.setVisible(false);
+            thirdREG.setVisible(false);
+            thirdEVE.setVisible(false);
+            thirdWND.setVisible(false);
 
         }
     }
@@ -476,20 +660,83 @@ public class SettingsPageController implements Initializable {
         if (fourthP.isSelected()) {
             fourthStart.setVisible(true);
             fourthEnd.setVisible(true);
+            forthREG.setVisible(true);
+            forthEVE.setVisible(true);
+            forthWND.setVisible(true);
         } else {
             fourthStart.setVisible(false);
             fourthEnd.setVisible(false);
+            forthREG.setVisible(false);
+            forthEVE.setVisible(false);
+            forthWND.setVisible(false);
 
         }
+    }
+
+    void ClearConfig() {
+        checkMonday.setSelected(false);
+        checkTuesday.setSelected(false);
+        checkWednesday.setSelected(false);
+        checkThursday.setSelected(false);
+        checkFriday.setSelected(false);
+        checkSaturday.setSelected(false);
+        checkSunday.setSelected(false);
+        firstP.setSelected(false);
+        secondP.setSelected(false);
+        thirdP.setSelected(false);
+        fourthP.setSelected(false);
+        firstStart.setVisible(false);
+        firstEnd.setVisible(false);
+        secondStart.setVisible(false);
+        secondEnd.setVisible(false);
+        thirdStart.setVisible(false);
+        thirdEnd.setVisible(false);
+        fourthStart.setVisible(false);
+        fourthEnd.setVisible(false);
+        firstStart.setValue(null);
+        firstEnd.setValue(null);
+        secondStart.setValue(null);
+        secondEnd.setValue(null);
+        thirdStart.setValue(null);
+        thirdEnd.setValue(null);
+        fourthStart.setValue(null);
+        fourthEnd.setValue(null);
+        firstREG.setSelected(false);
+        firstEVE.setSelected(false);
+        firstWND.setSelected(false);
+        secondREG.setSelected(false);
+        secondEVE.setSelected(false);
+        secondWND.setSelected(false);
+        thirdREG.setSelected(false);
+        thirdEVE.setSelected(false);
+        thirdWND.setSelected(false);
+        forthREG.setSelected(false);
+        forthEVE.setSelected(false);
+        forthWND.setSelected(false);
+        firstREG.setVisible(false);
+        firstEVE.setVisible(false);
+        firstWND.setVisible(false);
+        secondREG.setVisible(false);
+        secondEVE.setVisible(false);
+        secondWND.setVisible(false);
+        thirdREG.setVisible(false);
+        thirdEVE.setVisible(false);
+        thirdWND.setVisible(false);
+        forthREG.setVisible(false);
+        forthEVE.setVisible(false);
+        forthWND.setVisible(false);
+
     }
 
     @FXML
     private void HandleCourseSelection(ActionEvent event) {
         if (cm_course.getValue() != null && cm_venue.getValue() != null) {
-            SpecialVenue van = new SpecialVenue(cm_course.getValue(), cm_venue.getValue());
+            String val = cm_course.getValue().replaceAll("\\s+", "").split("-")[1].replaceAll("\\s+", "");
+            SpecialVenue van = new SpecialVenue(val, cm_venue.getValue());
+
             boolean exist = false;
             for (SpecialVenue venue : tv_special.getItems()) {
-                if (venue.getCourse().equals(cm_course.getValue())) {
+                if (venue.getCourse().equals(val)) {
                     exist = true;
                     break;
                 }
@@ -532,12 +779,18 @@ public class SettingsPageController implements Initializable {
         List<ObservableMap<String, Object>> ListOfPeriods = new ArrayList<>();
         if (firstP.isSelected()) {
             if (firstStart.getValue() != null && firstEnd.getValue() != null) {
-                PeriodsObject p = new PeriodsObject();
-                p.setPeriod("1st Period");
-                p.setEndTime(firstEnd.getValue());
-                p.setStartTime(firstStart.getValue());
-                ListOfPeriods.add(p.getPeriodsObjectMap());
-
+                if (firstREG.isSelected() || firstEVE.isSelected() || firstWND.isSelected()) {
+                    PeriodsObject p = new PeriodsObject();
+                    p.setPeriod("1st Period");
+                    p.setEndTime(firstEnd.getValue());
+                    p.setStartTime(firstStart.getValue());
+                    p.setEve(firstEVE.isSelected());
+                    p.setReg(firstREG.isSelected());
+                    p.setWnd(firstWND.isSelected());                
+                    ListOfPeriods.add(p.toMap());
+                } else {
+                    GF.inforAlert("Incomplet data", "Please Select at least one category of student for Fist Period", Alert.AlertType.WARNING);
+                }
             } else {
                 GF.inforAlert("Incomplet data", "Please Set start and End time for 1st Period", Alert.AlertType.WARNING);
             }
@@ -545,11 +798,18 @@ public class SettingsPageController implements Initializable {
 
         if (secondP.isSelected()) {
             if (secondStart.getValue() != null && secondEnd.getValue() != null) {
-                PeriodsObject p = new PeriodsObject();
-                p.setPeriod("2nd Period");
-                p.setEndTime(secondEnd.getValue());
-                p.setStartTime(secondStart.getValue());
-                ListOfPeriods.add(p.getPeriodsObjectMap());
+                if (secondREG.isSelected() || secondEVE.isSelected() || secondWND.isSelected()) {
+                    PeriodsObject p = new PeriodsObject();
+                    p.setPeriod("2nd Period");
+                    p.setEndTime(secondEnd.getValue());
+                    p.setStartTime(secondStart.getValue());
+                    p.setEve(secondEVE.isSelected());
+                    p.setReg(secondREG.isSelected());
+                    p.setWnd(secondWND.isSelected());
+                    ListOfPeriods.add(p.toMap());
+                } else {
+                    GF.inforAlert("Incomplet data", "Please Select at least one category of student for Second Period", Alert.AlertType.WARNING);
+                }
             } else {
                 GF.inforAlert("Incomplet data", "Please Set start and End time for 2nd Period", Alert.AlertType.WARNING);
             }
@@ -557,11 +817,18 @@ public class SettingsPageController implements Initializable {
 
         if (thirdP.isSelected()) {
             if (thirdStart.getValue() != null && thirdEnd.getValue() != null) {
-                PeriodsObject p = new PeriodsObject();
-                p.setPeriod("3rd Period");
-                p.setEndTime(thirdEnd.getValue());
-                p.setStartTime(thirdStart.getValue());
-                ListOfPeriods.add(p.getPeriodsObjectMap());
+                if (thirdREG.isSelected() || thirdEVE.isSelected() || thirdWND.isSelected()) {
+                    PeriodsObject p = new PeriodsObject();
+                    p.setPeriod("3rd Period");
+                    p.setEndTime(thirdEnd.getValue());
+                    p.setStartTime(thirdStart.getValue());
+                    p.setEve(thirdEVE.isSelected());
+                    p.setReg(thirdREG.isSelected());
+                    p.setWnd(thirdWND.isSelected());
+                     ListOfPeriods.add(p.toMap());
+                } else {
+                    GF.inforAlert("Incomplet data", "Please Select at least one category of student for Third Period", Alert.AlertType.WARNING);
+                }
             } else {
                 GF.inforAlert("Incomplet data", "Please Set start and End time for 3rd Period", Alert.AlertType.WARNING);
             }
@@ -569,11 +836,19 @@ public class SettingsPageController implements Initializable {
 
         if (fourthP.isSelected()) {
             if (fourthStart.getValue() != null && fourthEnd.getValue() != null) {
-                PeriodsObject p = new PeriodsObject();
-                p.setPeriod("4th Period");
-                p.setEndTime(fourthEnd.getValue());
-                p.setStartTime(fourthStart.getValue());
-                ListOfPeriods.add(p.getPeriodsObjectMap());
+                if (forthREG.isSelected() || forthEVE.isSelected() || forthWND.isSelected()) {
+                    PeriodsObject p = new PeriodsObject();
+                    p.setPeriod("4th Period");
+                    p.setEndTime(fourthEnd.getValue());
+                    p.setStartTime(fourthStart.getValue());
+
+                    p.setEve(forthEVE.isSelected());
+                    p.setReg(forthREG.isSelected());
+                    p.setWnd(forthWND.isSelected());
+                    ListOfPeriods.add(p.toMap());
+                } else {
+                    GF.inforAlert("Incomplet data", "Please Select at least one category of student for Fourth Period", Alert.AlertType.WARNING);
+                }
             } else {
                 GF.inforAlert("Incomplet data", "Please Set start and End time for 4th Period", Alert.AlertType.WARNING);
             }
@@ -589,11 +864,10 @@ public class SettingsPageController implements Initializable {
             if (tv_special.getItems() != null && !tv_special.getItems().isEmpty()) {
                 for (SpecialVenue venue : tv_special.getItems()) {
                     if (text.equals(venue.getCourse())) {
-                        listOfSpecialVenue.add(new SpecialVenue(course.getCode(), venue.getVenue()).getSpecialVenueMap());
+                        listOfSpecialVenue.add(new SpecialVenue(venue.getCourse(), venue.getVenue()).getSpecialVenueMap());
                         break;
                     }
                 }
-
             }
         }
 
@@ -605,4 +879,136 @@ public class SettingsPageController implements Initializable {
         }
     }
 
+    @FXML
+    private void onClear(ActionEvent event) {
+        LoadingDailog loading = new LoadingDailog("Deleting Configurations........");
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION,
+                "Are you sure you want to Delete all configurations. Note that all tables under this config will be deleted.",
+                ButtonType.YES, ButtonType.NO);
+        alert.setHeaderText("Delete Data");
+        alert.getDialogPane().getStylesheets().add("/Styles/dialogStyle.css");
+        alert.getDialogPane().setMinSize(400, 200);
+        alert.showAndWait();
+        if (alert.getResult() == ButtonType.YES) {
+            Service<Document> service = new Service<Document>() {
+                @Override
+                protected Task<Document> createTask() {
+                    return new Task<Document>() {
+                        @Override
+                        protected Document call() throws Exception {
+                            return DBservices.DeleteConfig(config); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+                        }
+                    };
+
+                }
+            };
+
+            service.setOnFailed((WorkerStateEvent evt) -> {
+                loading.close();
+            });
+            service.setOnRunning((WorkerStateEvent evt) -> loading.show());
+            service.setOnSucceeded((WorkerStateEvent evt) -> {
+                loading.close();
+                GF.inforAlert("Data Delete", "Configuration Successfully Delete", Alert.AlertType.INFORMATION);
+                ClearConfig();
+                loadConfig();
+            });
+            service.start();
+        }
+    }
+
+    private List<ObservableMap<String, Object>> handleDaySelect() {
+        List<ObservableMap<String, Object>> list = new ArrayList();
+        if (checkMonday.isSelected()) {
+            DaysObject day = new DaysObject();
+            if (monREG.isSelected() || monEVE.isSelected() || monWND.isSelected()) {
+                day.setDay("Monday");
+                day.setReg(monREG.isSelected());
+                day.setEve(monEVE.isSelected());
+                day.setWnd(monWND.isSelected());
+                 list.add(day.toMap());
+            } else {
+                GF.inforAlert("Incomplete Data", "Please Select category of Students for Monday", Alert.AlertType.WARNING);
+            }
+        }
+
+        if (checkTuesday.isSelected()) {
+            DaysObject day = new DaysObject();
+            if (tueREG.isSelected() || tueEVE.isSelected() || tueWND.isSelected()) {
+                day.setDay("Tuesday");
+                day.setReg(tueREG.isSelected());
+                day.setEve(tueEVE.isSelected());
+                day.setWnd(tueWND.isSelected());
+                 list.add(day.toMap());
+            } else {
+                GF.inforAlert("Incomplete Data", "Please Select category of Students for Tuesday", Alert.AlertType.WARNING);
+            }
+        }
+
+        if (checkWednesday.isSelected()) {
+            DaysObject day = new DaysObject();
+            if (wedREG.isSelected() || wedEVE.isSelected() || wedWND.isSelected()) {
+                day.setDay("Wednesday");
+                day.setReg(wedREG.isSelected());
+                day.setEve(wedEVE.isSelected());
+                day.setWnd(wedWND.isSelected());
+                list.add(day.toMap());
+            } else {
+                GF.inforAlert("Incomplete Data", "Please Select category of Students for Wednesday", Alert.AlertType.WARNING);
+            }
+        }
+
+        if (checkThursday.isSelected()) {
+            DaysObject day = new DaysObject();
+            if (thuREG.isSelected() || thuEVE.isSelected() || thuWND.isSelected()) {
+                day.setDay("Thursday");
+                day.setReg(thuREG.isSelected());
+                day.setEve(thuEVE.isSelected());
+                day.setWnd(thuWND.isSelected());
+                 list.add(day.toMap());
+            } else {
+                GF.inforAlert("Incomplete Data", "Please Select category of Students for Thursday", Alert.AlertType.WARNING);
+            }
+        }
+
+        if (checkFriday.isSelected()) {
+            DaysObject day = new DaysObject();
+            if (friREG.isSelected() || friEVE.isSelected() || friWND.isSelected()) {
+                day.setDay("Friday");
+                day.setReg(friREG.isSelected());
+                day.setEve(friEVE.isSelected());
+                day.setWnd(friWND.isSelected());
+                 list.add(day.toMap());
+            } else {
+                GF.inforAlert("Incomplete Data", "Please Select category of Students for Friday", Alert.AlertType.WARNING);
+            }
+        }
+
+        if (checkSaturday.isSelected()) {
+            DaysObject day = new DaysObject();
+            if (satREG.isSelected() || satEVE.isSelected() || satWND.isSelected()) {
+                day.setDay("Saturday");
+                day.setReg(satREG.isSelected());
+                day.setEve(satEVE.isSelected());
+                day.setWnd(satWND.isSelected());                           
+                list.add(day.toMap());
+            } else {
+                GF.inforAlert("Incomplete Data", "Please Select category of Students for Saturday", Alert.AlertType.WARNING);
+            }
+        }
+
+        if (checkSunday.isSelected()) {
+            DaysObject day = new DaysObject();
+            if (sunREG.isSelected() || sunEVE.isSelected() || sunWND.isSelected()) {
+                day.setDay("Sunday");
+                day.setReg(sunREG.isSelected());
+                day.setEve(sunEVE.isSelected());
+                day.setWnd(sunWND.isSelected());              
+                 list.add(day.toMap());
+            } else {
+                GF.inforAlert("Incomplete Data", "Please Select category of Students for Sunday", Alert.AlertType.WARNING);
+            }
+        }
+        return list;
+    }
 }

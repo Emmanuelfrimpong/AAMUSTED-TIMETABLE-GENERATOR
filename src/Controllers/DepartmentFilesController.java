@@ -8,15 +8,13 @@ import MongoServices.DatabaseServices;
 import Objects.CoursesObject;
 import Objects.StudentsObject;
 import com.jfoenix.controls.JFXButton;
-import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
-import java.util.concurrent.ExecutionException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.ObservableMap;
@@ -24,8 +22,6 @@ import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
-import javafx.event.Event;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
@@ -33,15 +29,19 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.DialogPane;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import javax.swing.JFileChooser;
+import javafx.stage.StageStyle;
 
 /**
  * FXML Controller class
@@ -122,7 +122,8 @@ public class DepartmentFilesController implements Initializable {
     }
 
     @FXML
-    private void handleImport(ActionEvent event) {
+    private void handleImport(ActionEvent event) throws IOException {
+
         fileChooser.getExtensionFilters().addAll(
                 new FileChooser.ExtensionFilter("Excel Files", "*.xlsx"),
                 new FileChooser.ExtensionFilter("Excel Files", "*.xls")
@@ -131,13 +132,16 @@ public class DepartmentFilesController implements Initializable {
         File selectedFile = fileChooser.showOpenDialog(stage);
         if (selectedFile != null && selectedFile.exists()) {
             try {
+
                 ObservableMap<String, Object> incomingData = DBservices.LoadStudentsToDatabase(selectedFile);
                 if ((boolean) incomingData.get("isSaved")) {
+
                     getDepartmentData();
                     GF.showToast("Data saved Succefully", stage);
                 }
 
             } catch (IOException ex) {
+
                 GF.inforAlert("File Error", ex.getMessage(), Alert.AlertType.ERROR);
 
             }
@@ -169,6 +173,10 @@ public class DepartmentFilesController implements Initializable {
                 };
             }
         };
+        service.setOnFailed((WorkerStateEvent event) -> {
+            loading.close();
+           
+        });
         service.setOnRunning((WorkerStateEvent event) -> loading.show());
         service.setOnSucceeded((WorkerStateEvent event) -> {
             loading.close();
@@ -208,7 +216,6 @@ public class DepartmentFilesController implements Initializable {
                     GF.showToast("Faild to delete Student Class", stage);
                 }
             }
-
             return student;
         }));
         col_edit.setCellFactory(ActionButtonTableCell.<StudentsObject>forTableColumn(editPathe, editStyle, (StudentsObject student) -> {
@@ -225,7 +232,6 @@ public class DepartmentFilesController implements Initializable {
         String editPathe = "/images/edit.png";
         String deleteStyle = "/Styles/delete_button_style.css";
         String editStyle = "/Styles/update_button_style.css";
-
         col_code.setCellValueFactory(new PropertyValueFactory<>("code"));
         col_title.setCellValueFactory(new PropertyValueFactory<>("title"));
         col_hours.setCellValueFactory(new PropertyValueFactory<>("creditHours"));
@@ -233,7 +239,6 @@ public class DepartmentFilesController implements Initializable {
         col_phone.setCellValueFactory(new PropertyValueFactory<>("lecturerPhone"));
         col_email.setCellValueFactory(new PropertyValueFactory<>("lecturerEmail"));
         col_lectName.setCellValueFactory(new PropertyValueFactory<>("lecturerName"));
-
         col_deleteCours.setCellFactory(ActionButtonTableCell.<CoursesObject>forTableColumn(deletePathe, deleteStyle, (CoursesObject course) -> {
             ButtonType submit = new ButtonType("Dlete", ButtonBar.ButtonData.OK_DONE);
             ButtonType cancel = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
@@ -246,7 +251,6 @@ public class DepartmentFilesController implements Initializable {
                     GF.showToast("Faild to delete Course", stage);
                 }
             }
-
             return course;
         }));
         col_editCourse.setCellFactory(ActionButtonTableCell.<CoursesObject>forTableColumn(editPathe, editStyle, (CoursesObject course) -> {
@@ -259,32 +263,32 @@ public class DepartmentFilesController implements Initializable {
 
     @FXML
     private void handleDownload(ActionEvent event) {
-        LoadingDailog loading = new LoadingDailog("Downloading........");
-        Task<String> task = new Task<String>() {
-            @Override
-            public String call() {
-                ES.ExportDepartment();
-                return new JFileChooser().getFileSystemView().getDefaultDirectory().toString() + "/TIME TABLE GEN";
+        List<String> departments = new ArrayList();
+        departments.add("For Department");
+        departments.add("For Libral/African Studies");
+        ButtonType submit = new ButtonType("Submit Data", ButtonBar.ButtonData.OK_DONE);
+        ButtonType cancel = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+        Dialog<String> dialog = new Dialog<>();
+        dialog.setHeaderText("Select Source of file and proceed");
+        DialogPane dialogPane = dialog.getDialogPane();
+        dialog.initStyle(StageStyle.UNDECORATED);
+        dialogPane.getStylesheets().add("/Styles/dialogStyle.css");
+        dialogPane.getButtonTypes().addAll(submit, cancel);
+        ComboBox<String> comboBox = new ComboBox<>();
+        comboBox.getItems().addAll(departments);
+        comboBox.getSelectionModel().selectFirst();
+        dialogPane.setContent(new VBox(8, comboBox));
+        dialog.setResultConverter((ButtonType button) -> {
+            if (button == submit) {
+                return comboBox.getValue();
             }
-        };
-        task.setOnFailed((e) -> {
-            loading.close();
+            return null;
         });
 
-        task.setOnRunning((e) -> loading.show());
-        task.setOnSucceeded((e) -> {
-            loading.close();
-            try {
-                String file = task.get();
-                if (new File(file).exists()) {
-                    Desktop.getDesktop().open(new File(file));
-                }
-            } catch (IOException | InterruptedException | ExecutionException ex) {
-                Logger.getLogger(DepartmentFilesController.class.getName()).log(Level.SEVERE, null, ex);
-            }
-
+        Optional<String> optionalResult = dialog.showAndWait();
+        optionalResult.ifPresent((String results) -> {
+            ES.ExportDepartment(results);
         });
-        new Thread(task).start();
     }
 
 }

@@ -20,7 +20,7 @@
    <children>
       <VBox alignment="CENTER" prefHeight="587.0" prefWidth="940.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <Label prefHeight="46.0" prefWidth="750.0" text="Provide all the informations requested in this section. Please note that this information will not be requested again, however you can edit them in the settings section of the system." textAlignment="CENTER" textFill="#0f3460" wrapText="true" VBox.vgrow="ALWAYS">
+            <Label prefHeight="18.0" prefWidth="1216.0" text="Provide all the informations requested in this section. Please note that this information will not be requested again, however you can edit them in the settings section of the system." textAlignment="CENTER" textFill="#0f3460" wrapText="true" VBox.vgrow="ALWAYS">
                <font>
                   <Font name="Bell MT Bold" size="15.0" />
                </font>
@@ -30,7 +30,7 @@
             </Label>
             <HBox alignment="CENTER" prefHeight="509.0" prefWidth="920.0" VBox.vgrow="ALWAYS">
                <children>
-                  <SplitPane dividerPositions="0.5573394495412844" orientation="VERTICAL" prefHeight="549.0" prefWidth="360.0" style="-fx-background-color: #F4F4F4;" HBox.hgrow="ALWAYS">
+                  <SplitPane dividerPositions="0.5573394495412844" orientation="VERTICAL" prefHeight="453.0" prefWidth="448.0" style="-fx-background-color: #F4F4F4;" HBox.hgrow="ALWAYS">
                     <items>
                       <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
                            <children>
@@ -44,62 +44,279 @@
                                           <Font name="Bell MT Bold" size="22.0" />
                                        </font>
                                     </Label>
-                                    <CheckBox fx:id="checkMonday" mnemonicParsing="false" onAction="#HandleMondaySelect" prefHeight="18.0" prefWidth="115.0" text="MONDAY">
-                                       <font>
-                                          <Font name="Bell MT Bold" size="13.0" />
-                                       </font>
+                                    <HBox alignment="CENTER_LEFT">
                                        <VBox.margin>
                                           <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                                        </VBox.margin>
-                                    </CheckBox>
-                                    <CheckBox fx:id="checkTuesday" layoutX="122.0" layoutY="97.0" mnemonicParsing="false" onAction="#HandleTuesdaySelect" prefHeight="18.0" prefWidth="115.0" text="TUESDAY">
-                                       <font>
-                                          <Font name="Bell MT Bold" size="13.0" />
-                                       </font>
+                                       <children>
+                                          <CheckBox fx:id="checkMonday" mnemonicParsing="false" onAction="#HandleMondaySelect" prefHeight="18.0" prefWidth="115.0" text="MONDAY">
+                                             <font>
+                                                <Font name="Bell MT Bold" size="13.0" />
+                                             </font>
+                                             <HBox.margin>
+                                                <Insets right="30.0" />
+                                             </HBox.margin>
+                                          </CheckBox>
+                                          <CheckBox fx:id="monREG" mnemonicParsing="false" prefHeight="18.0" prefWidth="50.0" text="Reg" visible="false">
+                                             <font>
+                                                <Font name="Bell MT Bold" size="13.0" />
+                                             </font>
+                                             <HBox.margin>
+                                                <Insets left="5.0" right="5.0" />
+                                             </HBox.margin>
+                                          </CheckBox>
+                                          <CheckBox fx:id="monEVE" mnemonicParsing="false" prefHeight="18.0" prefWidth="55.0" text="Eve" visible="false">
+                                             <font>
+                                                <Font name="Bell MT Bold" size="13.0" />
+                                             </font>
+                                             <HBox.margin>
+                                                <Insets left="5.0" right="5.0" />
+                                             </HBox.margin>
+                                          </CheckBox>
+                                          <CheckBox fx:id="monWND" mnemonicParsing="false" prefHeight="18.0" prefWidth="62.0" text="Wknd" visible="false">
+                                             <font>
+                                                <Font name="Bell MT Bold" size="13.0" />
+                                             </font>
+                                             <HBox.margin>
+                                                <Insets left="5.0" right="5.0" />
+                                             </HBox.margin>
+                                          </CheckBox>
+                                       </children>
+                                    </HBox>
+                                    <HBox>
                                        <VBox.margin>
                                           <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                                        </VBox.margin>
-                                    </CheckBox>
-                                    <CheckBox fx:id="checkWednesday" layoutX="122.0" layoutY="125.0" mnemonicParsing="false" onAction="#HandleWednesdaySelect" prefHeight="18.0" prefWidth="115.0" text="WEDNESDAY">
-                                       <font>
-                                          <Font name="Bell MT Bold" size="13.0" />
-                                       </font>
+                                       <children>
+                                          <CheckBox fx:id="checkTuesday" mnemonicParsing="false" onAction="#HandleTuesdaySelect" prefHeight="18.0" prefWidth="115.0" text="TUESDAY">
+                                             <font>
+                                                <Font name="Bell MT Bold" size="13.0" />
+                                             </font>
+                                             <HBox.margin>
+                                                <Insets right="30.0" />
+                                             </HBox.margin>
+                                          </CheckBox>
+                                          <CheckBox fx:id="tueREG" mnemonicParsing="false" prefHeight="18.0" prefWidth="50.0" text="Reg" visible="false">
+                                             <font>
+                                                <Font name="Bell MT Bold" size="13.0" />
+                                             </font>
+                                             <HBox.margin>
+                                                <Insets left="5.0" right="5.0" />
+                                             </HBox.margin>
+                                          </CheckBox>
+                                          <CheckBox fx:id="tueEVE" mnemonicParsing="false" prefHeight="18.0" prefWidth="55.0" text="Eve" visible="false">
+                                             <font>
+                                                <Font name="Bell MT Bold" size="13.0" />
+                                             </font>
+                                             <HBox.margin>
+                                                <Insets left="5.0" right="5.0" />
+                                             </HBox.margin>
+                                          </CheckBox>
+                                          <CheckBox fx:id="tueWND" mnemonicParsing="false" prefHeight="18.0" prefWidth="62.0" text="Wknd" visible="false">
+                                             <font>
+                                                <Font name="Bell MT Bold" size="13.0" />
+                                             </font>
+                                             <HBox.margin>
+                                                <Insets left="5.0" right="5.0" />
+                                             </HBox.margin>
+                                          </CheckBox>
+                                       </children>
+                                    </HBox>
+                                    <HBox>
                                        <VBox.margin>
                                           <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                                        </VBox.margin>
-                                    </CheckBox>
-                                    <CheckBox fx:id="checkThursday" layoutX="122.0" layoutY="143.0" mnemonicParsing="false" onAction="#HandleThursdaySelect" prefHeight="18.0" prefWidth="115.0" text="THURSDAY">
-                                       <font>
-                                          <Font name="Bell MT Bold" size="13.0" />
-                                       </font>
+                                       <children>
+                                          <CheckBox fx:id="checkWednesday" mnemonicParsing="false" onAction="#HandleWednesdaySelect" prefHeight="18.0" prefWidth="115.0" text="WEDNESDAY">
+                                             <font>
+                                                <Font name="Bell MT Bold" size="13.0" />
+                                             </font>
+                                             <HBox.margin>
+                                                <Insets right="30.0" />
+                                             </HBox.margin>
+                                          </CheckBox>
+                                          <CheckBox fx:id="wedREG" mnemonicParsing="false" prefHeight="18.0" prefWidth="50.0" text="Reg" visible="false">
+                                             <font>
+                                                <Font name="Bell MT Bold" size="13.0" />
+                                             </font>
+                                             <HBox.margin>
+                                                <Insets left="5.0" right="5.0" />
+                                             </HBox.margin>
+                                          </CheckBox>
+                                          <CheckBox fx:id="wedEVE" mnemonicParsing="false" prefHeight="18.0" prefWidth="55.0" text="Eve" visible="false">
+                                             <font>
+                                                <Font name="Bell MT Bold" size="13.0" />
+                                             </font>
+                                             <HBox.margin>
+                                                <Insets left="5.0" right="5.0" />
+                                             </HBox.margin>
+                                          </CheckBox>
+                                          <CheckBox fx:id="wedWND" mnemonicParsing="false" prefHeight="18.0" prefWidth="62.0" text="Wknd" visible="false">
+                                             <font>
+                                                <Font name="Bell MT Bold" size="13.0" />
+                                             </font>
+                                             <HBox.margin>
+                                                <Insets left="5.0" right="5.0" />
+                                             </HBox.margin>
+                                          </CheckBox>
+                                       </children>
+                                    </HBox>
+                                    <HBox>
                                        <VBox.margin>
                                           <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                                        </VBox.margin>
-                                    </CheckBox>
-                                    <CheckBox fx:id="checkFriday" layoutX="122.0" layoutY="161.0" mnemonicParsing="false" onAction="#HandleFridaySelect" prefHeight="18.0" prefWidth="115.0" text="FRIDAY">
-                                       <font>
-                                          <Font name="Bell MT Bold" size="13.0" />
-                                       </font>
+                                       <children>
+                                          <CheckBox fx:id="checkThursday" mnemonicParsing="false" onAction="#HandleThursdaySelect" prefHeight="18.0" prefWidth="115.0" text="THURSDAY">
+                                             <font>
+                                                <Font name="Bell MT Bold" size="13.0" />
+                                             </font>
+                                             <HBox.margin>
+                                                <Insets right="30.0" />
+                                             </HBox.margin>
+                                          </CheckBox>
+                                          <CheckBox fx:id="thuREG" mnemonicParsing="false" prefHeight="18.0" prefWidth="50.0" text="Reg" visible="false">
+                                             <font>
+                                                <Font name="Bell MT Bold" size="13.0" />
+                                             </font>
+                                             <HBox.margin>
+                                                <Insets left="5.0" right="5.0" />
+                                             </HBox.margin>
+                                          </CheckBox>
+                                          <CheckBox fx:id="thuEVE" mnemonicParsing="false" prefHeight="18.0" prefWidth="55.0" text="Eve" visible="false">
+                                             <font>
+                                                <Font name="Bell MT Bold" size="13.0" />
+                                             </font>
+                                             <HBox.margin>
+                                                <Insets left="5.0" right="5.0" />
+                                             </HBox.margin>
+                                          </CheckBox>
+                                          <CheckBox fx:id="thuWND" mnemonicParsing="false" prefHeight="18.0" prefWidth="62.0" text="Wknd" visible="false">
+                                             <font>
+                                                <Font name="Bell MT Bold" size="13.0" />
+                                             </font>
+                                             <HBox.margin>
+                                                <Insets left="5.0" right="5.0" />
+                                             </HBox.margin>
+                                          </CheckBox>
+                                       </children>
+                                    </HBox>
+                                    <HBox>
                                        <VBox.margin>
                                           <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                                        </VBox.margin>
-                                    </CheckBox>
-                                    <CheckBox fx:id="checkSaturday" layoutX="122.0" layoutY="179.0" mnemonicParsing="false" onAction="#HandleSaturdaySelect" prefHeight="18.0" prefWidth="115.0" text="SATURDAY">
-                                       <font>
-                                          <Font name="Bell MT Bold" size="13.0" />
-                                       </font>
+                                       <children>
+                                          <CheckBox fx:id="checkFriday" mnemonicParsing="false" onAction="#HandleFridaySelect" prefHeight="18.0" prefWidth="115.0" text="FRIDAY">
+                                             <font>
+                                                <Font name="Bell MT Bold" size="13.0" />
+                                             </font>
+                                             <HBox.margin>
+                                                <Insets right="30.0" />
+                                             </HBox.margin>
+                                          </CheckBox>
+                                          <CheckBox fx:id="friREG" mnemonicParsing="false" prefHeight="18.0" prefWidth="50.0" text="Reg" visible="false">
+                                             <font>
+                                                <Font name="Bell MT Bold" size="13.0" />
+                                             </font>
+                                             <HBox.margin>
+                                                <Insets left="5.0" right="5.0" />
+                                             </HBox.margin>
+                                          </CheckBox>
+                                          <CheckBox fx:id="friEVE" mnemonicParsing="false" prefHeight="18.0" prefWidth="55.0" text="Eve" visible="false">
+                                             <font>
+                                                <Font name="Bell MT Bold" size="13.0" />
+                                             </font>
+                                             <HBox.margin>
+                                                <Insets left="5.0" right="5.0" />
+                                             </HBox.margin>
+                                          </CheckBox>
+                                          <CheckBox fx:id="friWND" mnemonicParsing="false" prefHeight="18.0" prefWidth="62.0" text="Wknd" visible="false">
+                                             <font>
+                                                <Font name="Bell MT Bold" size="13.0" />
+                                             </font>
+                                             <HBox.margin>
+                                                <Insets left="5.0" right="5.0" />
+                                             </HBox.margin>
+                                          </CheckBox>
+                                       </children>
+                                    </HBox>
+                                    <HBox>
                                        <VBox.margin>
                                           <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                                        </VBox.margin>
-                                    </CheckBox>
-                                    <CheckBox fx:id="checkSunday" layoutX="122.0" layoutY="197.0" mnemonicParsing="false" onAction="#HandleSundaySelect" prefHeight="18.0" prefWidth="115.0" text="SUNDAY">
-                                       <font>
-                                          <Font name="Bell MT Bold" size="13.0" />
-                                       </font>
+                                       <children>
+                                          <CheckBox fx:id="checkSaturday" mnemonicParsing="false" onAction="#HandleSaturdaySelect" prefHeight="18.0" prefWidth="115.0" text="SATURDAY">
+                                             <font>
+                                                <Font name="Bell MT Bold" size="13.0" />
+                                             </font>
+                                             <HBox.margin>
+                                                <Insets right="30.0" />
+                                             </HBox.margin>
+                                          </CheckBox>
+                                          <CheckBox fx:id="satREG" mnemonicParsing="false" prefHeight="18.0" prefWidth="50.0" text="Reg" visible="false">
+                                             <font>
+                                                <Font name="Bell MT Bold" size="13.0" />
+                                             </font>
+                                             <HBox.margin>
+                                                <Insets left="5.0" right="5.0" />
+                                             </HBox.margin>
+                                          </CheckBox>
+                                          <CheckBox fx:id="satEVE" mnemonicParsing="false" prefHeight="18.0" prefWidth="55.0" text="Eve" visible="false">
+                                             <font>
+                                                <Font name="Bell MT Bold" size="13.0" />
+                                             </font>
+                                             <HBox.margin>
+                                                <Insets left="5.0" right="5.0" />
+                                             </HBox.margin>
+                                          </CheckBox>
+                                          <CheckBox fx:id="satWND" mnemonicParsing="false" prefHeight="18.0" prefWidth="62.0" text="Wknd" visible="false">
+                                             <font>
+                                                <Font name="Bell MT Bold" size="13.0" />
+                                             </font>
+                                             <HBox.margin>
+                                                <Insets left="5.0" right="5.0" />
+                                             </HBox.margin>
+                                          </CheckBox>
+                                       </children>
+                                    </HBox>
+                                    <HBox>
                                        <VBox.margin>
                                           <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                                        </VBox.margin>
-                                    </CheckBox>
+                                       <children>
+                                          <CheckBox fx:id="checkSunday" mnemonicParsing="false" onAction="#HandleSundaySelect" prefHeight="18.0" prefWidth="115.0" text="SUNDAY">
+                                             <font>
+                                                <Font name="Bell MT Bold" size="13.0" />
+                                             </font>
+                                             <HBox.margin>
+                                                <Insets right="30.0" />
+                                             </HBox.margin>
+                                          </CheckBox>
+                                          <CheckBox fx:id="sunREG" mnemonicParsing="false" prefHeight="18.0" prefWidth="50.0" text="Reg" visible="false">
+                                             <font>
+                                                <Font name="Bell MT Bold" size="13.0" />
+                                             </font>
+                                             <HBox.margin>
+                                                <Insets left="5.0" right="5.0" />
+                                             </HBox.margin>
+                                          </CheckBox>
+                                          <CheckBox fx:id="sunEVE" mnemonicParsing="false" prefHeight="18.0" prefWidth="55.0" text="Eve" visible="false">
+                                             <font>
+                                                <Font name="Bell MT Bold" size="13.0" />
+                                             </font>
+                                             <HBox.margin>
+                                                <Insets left="5.0" right="5.0" />
+                                             </HBox.margin>
+                                          </CheckBox>
+                                          <CheckBox fx:id="sunWND" mnemonicParsing="false" prefHeight="18.0" prefWidth="62.0" text="Wknd" visible="false">
+                                             <font>
+                                                <Font name="Bell MT Bold" size="13.0" />
+                                             </font>
+                                             <HBox.margin>
+                                                <Insets left="5.0" right="5.0" />
+                                             </HBox.margin>
+                                          </CheckBox>
+                                       </children>
+                                    </HBox>
                                  </children>
                                  <padding>
                                     <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
@@ -131,14 +348,38 @@
                                           </CheckBox>
                                           <ComboBox fx:id="firstStart" prefHeight="25.0" prefWidth="95.0" promptText="START" stylesheets="@../Styles/buttons.css" visible="false">
                                              <HBox.margin>
-                                                <Insets left="10.0" right="10.0" />
+                                                <Insets left="5.0" right="5.0" />
                                              </HBox.margin>
                                           </ComboBox>
                                           <ComboBox fx:id="firstEnd" layoutX="125.0" layoutY="13.0" prefHeight="25.0" prefWidth="95.0" promptText="END" stylesheets="@../Styles/buttons.css" visible="false">
                                              <HBox.margin>
-                                                <Insets left="10.0" right="10.0" />
+                                                <Insets left="5.0" right="5.0" />
                                              </HBox.margin>
                                           </ComboBox>
+                                          <CheckBox fx:id="firstREG" mnemonicParsing="false" prefHeight="18.0" prefWidth="50.0" text="Reg" visible="false">
+                                             <font>
+                                                <Font name="Bell MT Bold" size="13.0" />
+                                             </font>
+                                             <HBox.margin>
+                                                <Insets left="2.0" right="2.0" />
+                                             </HBox.margin>
+                                          </CheckBox>
+                                          <CheckBox fx:id="firstEVE" layoutX="355.0" layoutY="16.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="55.0" text="Eve" visible="false">
+                                             <font>
+                                                <Font name="Bell MT Bold" size="13.0" />
+                                             </font>
+                                             <HBox.margin>
+                                                <Insets left="2.0" right="2.0" />
+                                             </HBox.margin>
+                                          </CheckBox>
+                                          <CheckBox fx:id="firstWND" layoutX="408.0" layoutY="16.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="62.0" text="Wknd" visible="false">
+                                             <font>
+                                                <Font name="Bell MT Bold" size="13.0" />
+                                             </font>
+                                             <HBox.margin>
+                                                <Insets left="2.0" right="2.0" />
+                                             </HBox.margin>
+                                          </CheckBox>
                                        </children>
                                     </HBox>
                                     <HBox alignment="CENTER_LEFT" layoutX="25.0" layoutY="92.0" prefHeight="30.0" prefWidth="287.0">
@@ -150,14 +391,38 @@
                                           </CheckBox>
                                           <ComboBox fx:id="secondStart" prefHeight="25.0" prefWidth="95.0" promptText="START" stylesheets="@../Styles/buttons.css" visible="false">
                                              <HBox.margin>
-                                                <Insets left="10.0" right="10.0" />
+                                                <Insets left="5.0" right="5.0" />
                                              </HBox.margin>
                                           </ComboBox>
                                           <ComboBox fx:id="secondEnd" layoutX="125.0" layoutY="13.0" prefHeight="25.0" prefWidth="95.0" promptText="END" stylesheets="@../Styles/buttons.css" visible="false">
                                              <HBox.margin>
-                                                <Insets left="10.0" right="10.0" />
+                                                <Insets left="5.0" right="5.0" />
                                              </HBox.margin>
                                           </ComboBox>
+                                          <CheckBox fx:id="secondREG" mnemonicParsing="false" prefHeight="18.0" prefWidth="50.0" text="Reg" visible="false">
+                                             <font>
+                                                <Font name="Bell MT Bold" size="13.0" />
+                                             </font>
+                                             <HBox.margin>
+                                                <Insets left="2.0" right="2.0" />
+                                             </HBox.margin>
+                                          </CheckBox>
+                                          <CheckBox fx:id="secondEVE" mnemonicParsing="false" prefHeight="18.0" prefWidth="55.0" text="Eve" visible="false">
+                                             <font>
+                                                <Font name="Bell MT Bold" size="13.0" />
+                                             </font>
+                                             <HBox.margin>
+                                                <Insets left="2.0" right="2.0" />
+                                             </HBox.margin>
+                                          </CheckBox>
+                                          <CheckBox fx:id="secondWND" mnemonicParsing="false" prefHeight="18.0" prefWidth="62.0" text="Wknd" visible="false">
+                                             <font>
+                                                <Font name="Bell MT Bold" size="13.0" />
+                                             </font>
+                                             <HBox.margin>
+                                                <Insets left="2.0" right="2.0" />
+                                             </HBox.margin>
+                                          </CheckBox>
                                        </children>
                                        <VBox.margin>
                                           <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
@@ -172,14 +437,38 @@
                                           </CheckBox>
                                           <ComboBox fx:id="thirdStart" prefHeight="25.0" prefWidth="95.0" promptText="START" stylesheets="@../Styles/buttons.css" visible="false">
                                              <HBox.margin>
-                                                <Insets left="10.0" right="10.0" />
+                                                <Insets left="5.0" right="5.0" />
                                              </HBox.margin>
                                           </ComboBox>
                                           <ComboBox fx:id="thirdEnd" layoutX="125.0" layoutY="13.0" prefHeight="25.0" prefWidth="95.0" promptText="END" stylesheets="@../Styles/buttons.css" visible="false">
                                              <HBox.margin>
-                                                <Insets left="10.0" right="10.0" />
+                                                <Insets left="5.0" right="5.0" />
                                              </HBox.margin>
                                           </ComboBox>
+                                          <CheckBox fx:id="thirdREG" mnemonicParsing="false" prefHeight="18.0" prefWidth="50.0" text="Reg" visible="false">
+                                             <font>
+                                                <Font name="Bell MT Bold" size="13.0" />
+                                             </font>
+                                             <HBox.margin>
+                                                <Insets left="2.0" right="2.0" />
+                                             </HBox.margin>
+                                          </CheckBox>
+                                          <CheckBox fx:id="thirdEVE" mnemonicParsing="false" prefHeight="18.0" prefWidth="55.0" text="Eve" visible="false">
+                                             <font>
+                                                <Font name="Bell MT Bold" size="13.0" />
+                                             </font>
+                                             <HBox.margin>
+                                                <Insets left="2.0" right="2.0" />
+                                             </HBox.margin>
+                                          </CheckBox>
+                                          <CheckBox fx:id="thirdWND" mnemonicParsing="false" prefHeight="18.0" prefWidth="62.0" text="Wknd" visible="false">
+                                             <font>
+                                                <Font name="Bell MT Bold" size="13.0" />
+                                             </font>
+                                             <HBox.margin>
+                                                <Insets left="2.0" right="2.0" />
+                                             </HBox.margin>
+                                          </CheckBox>
                                        </children>
                                        <VBox.margin>
                                           <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
@@ -194,14 +483,38 @@
                                           </CheckBox>
                                           <ComboBox fx:id="fourthStart" prefHeight="25.0" prefWidth="95.0" promptText="START" stylesheets="@../Styles/buttons.css" visible="false">
                                              <HBox.margin>
-                                                <Insets left="10.0" right="10.0" />
+                                                <Insets left="5.0" right="5.0" />
                                              </HBox.margin>
                                           </ComboBox>
                                           <ComboBox fx:id="fourthEnd" layoutX="125.0" layoutY="13.0" prefHeight="25.0" prefWidth="95.0" promptText="END" stylesheets="@../Styles/buttons.css" visible="false">
                                              <HBox.margin>
-                                                <Insets left="10.0" right="10.0" />
+                                                <Insets left="5.0" right="5.0" />
                                              </HBox.margin>
                                           </ComboBox>
+                                          <CheckBox fx:id="forthREG" mnemonicParsing="false" prefHeight="18.0" prefWidth="50.0" text="Reg" visible="false">
+                                             <font>
+                                                <Font name="Bell MT Bold" size="13.0" />
+                                             </font>
+                                             <HBox.margin>
+                                                <Insets left="2.0" right="2.0" />
+                                             </HBox.margin>
+                                          </CheckBox>
+                                          <CheckBox fx:id="forthEVE" mnemonicParsing="false" prefHeight="18.0" prefWidth="55.0" text="Eve" visible="false">
+                                             <font>
+                                                <Font name="Bell MT Bold" size="13.0" />
+                                             </font>
+                                             <HBox.margin>
+                                                <Insets left="2.0" right="2.0" />
+                                             </HBox.margin>
+                                          </CheckBox>
+                                          <CheckBox fx:id="forthWND" mnemonicParsing="false" prefHeight="18.0" prefWidth="62.0" text="Wknd" visible="false">
+                                             <font>
+                                                <Font name="Bell MT Bold" size="13.0" />
+                                             </font>
+                                             <HBox.margin>
+                                                <Insets left="2.0" right="2.0" />
+                                             </HBox.margin>
+                                          </CheckBox>
                                        </children>
                                        <VBox.margin>
                                           <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
@@ -219,7 +532,7 @@
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </HBox.margin>
                   </SplitPane>
-                  <VBox prefHeight="438.0" prefWidth="356.0" style="-fx-background-color: #F4F4F4;" HBox.hgrow="ALWAYS">
+                  <VBox prefHeight="453.0" prefWidth="214.0" style="-fx-background-color: #F4F4F4;" HBox.hgrow="ALWAYS">
                      <children>
                         <Label text="SPECIAL VENUES" wrapText="true">
                            <font>
@@ -243,7 +556,7 @@
                               </JFXComboBox>
                            </children>
                         </HBox>
-                        <TableView fx:id="tv_special" prefHeight="463.0" prefWidth="263.0" style="-fx-background-color: #F4F4F4;">
+                        <TableView fx:id="tv_special" prefHeight="381.0" prefWidth="401.0" style="-fx-background-color: #F4F4F4;">
                           <columns>
                             <TableColumn fx:id="col_course" prefWidth="75.0" text="Course" />
                             <TableColumn fx:id="col_venue" prefWidth="75.0" text="Venue" />
@@ -260,7 +573,7 @@
                         <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
                      </padding>
                   </VBox>
-                  <VBox layoutX="529.0" layoutY="10.0" prefHeight="549.0" prefWidth="263.0" style="-fx-background-color: #F4F4F4;" HBox.hgrow="ALWAYS">
+                  <VBox layoutX="529.0" layoutY="10.0" prefHeight="453.0" prefWidth="223.0" style="-fx-background-color: #F4F4F4;" HBox.hgrow="ALWAYS">
                      <children>
                         <Label text="LIBERAL/AFRICAN STUDIES" wrapText="true">
                            <font>
@@ -303,20 +616,35 @@
                   </VBox>
                </children>
             </HBox>
-            <Button fx:id="btn_save" mnemonicParsing="false" onAction="#onSaveConfig" prefHeight="40.0" prefWidth="240.0" stylesheets="@../Styles/buttons.css" text="SAVE CONFIGURATIONS" textFill="#f8f3f3">
-               <font>
-                  <Font name="System Bold" size="13.0" />
-               </font>
-               <effect>
-                  <DropShadow />
-               </effect>
-               <cursor>
-                  <Cursor fx:constant="HAND" />
-               </cursor>
-               <VBox.margin>
-                  <Insets bottom="5.0" left="25.0" right="25.0" top="10.0" />
-               </VBox.margin>
-            </Button>
+            <HBox alignment="CENTER">
+               <children>
+                  <Button fx:id="btn_save" mnemonicParsing="false" onAction="#onSaveConfig" prefHeight="40.0" prefWidth="240.0" stylesheets="@../Styles/buttons.css" text="SAVE CONFIGURATIONS" textFill="#f8f3f3">
+                     <font>
+                        <Font name="System Bold" size="13.0" />
+                     </font>
+                     <effect>
+                        <DropShadow />
+                     </effect>
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                  </Button>
+                  <Button fx:id="btn_clear" mnemonicParsing="false" onAction="#onClear" prefHeight="31.0" prefWidth="144.0" stylesheets="@../Styles/buttons.css" text="CLEAR CONFIG" textFill="#f8f3f3">
+                     <font>
+                        <Font name="System Bold" size="13.0" />
+                     </font>
+                     <effect>
+                        <DropShadow />
+                     </effect>
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                     <HBox.margin>
+                        <Insets left="52.0" right="2.0" />
+                     </HBox.margin>
+                  </Button>
+               </children>
+            </HBox>
          </children>
          <padding>
             <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />

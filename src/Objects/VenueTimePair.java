@@ -1,10 +1,7 @@
-
 package Objects;
 
 import org.bson.Document;
 import org.bson.types.ObjectId;
-
-
 
 /**
  *
@@ -19,8 +16,16 @@ public class VenueTimePair {
     String isDisabilityAccessible;
     Document period;
     String day;
+    boolean reg;
+    boolean eve;
+    boolean wnd;
 
-    public VenueTimePair(ObjectId _id, String venueName, String uniqueId, String venueCapacity, String isDisabilityAccessible, Document period, String day) {
+   
+
+    public VenueTimePair() {
+    }
+
+    public VenueTimePair(ObjectId _id, String venueName, String uniqueId, String venueCapacity, String isDisabilityAccessible, Document period, String day, boolean reg, boolean eve, boolean wnd) {
         this._id = _id;
         this.venueName = venueName;
         this.uniqueId = uniqueId;
@@ -28,9 +33,10 @@ public class VenueTimePair {
         this.isDisabilityAccessible = isDisabilityAccessible;
         this.period = period;
         this.day = day;
+        this.reg = reg;
+        this.eve = eve;
+        this.wnd = wnd;
     }
-
-    public VenueTimePair(){}
 
     public ObjectId get_id() {
         return _id;
@@ -46,6 +52,14 @@ public class VenueTimePair {
 
     public void setVenueName(String venueName) {
         this.venueName = venueName;
+    }
+
+    public String getUniqueId() {
+        return uniqueId;
+    }
+
+    public void setUniqueId(String uniqueId) {
+        this.uniqueId = uniqueId;
     }
 
     public String getVenueCapacity() {
@@ -64,6 +78,13 @@ public class VenueTimePair {
         this.isDisabilityAccessible = isDisabilityAccessible;
     }
 
+    public Document getPeriod() {
+        return period;
+    }
+
+    public void setPeriod(Document period) {
+        this.period = period;
+    }
 
     public String getDay() {
         return day;
@@ -73,49 +94,57 @@ public class VenueTimePair {
         this.day = day;
     }
 
-  
-
-    public String getUniqueId() {
-        return uniqueId;
+    public boolean isReg() {
+        return reg;
     }
 
-    public void setUniqueId(String uniqueId) {
-        this.uniqueId = uniqueId;
+    public void setReg(boolean reg) {
+        this.reg = reg;
     }
 
-    public Document getPeriod() {
-        return period;
+    public boolean isEve() {
+        return eve;
     }
 
-    public void setPeriod(Document period) {
-        this.period = period;
+    public void setEve(boolean eve) {
+        this.eve = eve;
     }
 
-    
-    
+    public boolean isWnd() {
+        return wnd;
+    }
+
+    public void setWnd(boolean wnd) {
+        this.wnd = wnd;
+    }
+
     public Document toDocument() {
-
         Document doc = new Document();
         doc.append("venueName", venueName);
+        doc.append("uniqueId", uniqueId);
         doc.append("venueCapacity", venueCapacity);
         doc.append("isDisabilityAccessible", isDisabilityAccessible);
         doc.append("period", period);
         doc.append("day", day);
-        doc.append("_id", _id);
-        doc.append("uniqueId", uniqueId);
+        doc.append("reg", reg);
+        doc.append("eve", eve);
+        doc.append("wnd", wnd);
         return doc;
-
     }
 
-    public  VenueTimePair fromDocument (Document doc) {
-        VenueTimePair VTP=new VenueTimePair();
-        VTP.venueName = doc.getString("venueName");
-        VTP.venueCapacity = doc.getString("venueCapacity");
-        VTP.isDisabilityAccessible = doc.getString("isDisabilityAccessible");
-        VTP.period = (Document)doc.get("period");
-        VTP.day = doc.getString("day");
-        VTP._id =(ObjectId) doc.get("_id");
-        VTP.uniqueId=doc.getString("uniqueId");
-        return VTP;
+    public static VenueTimePair fromDocument(Document doc) {
+        VenueTimePair vtp = new VenueTimePair();
+        vtp.setVenueName(doc.getString("venueName"));
+        vtp.setUniqueId(doc.getString("uniqueId"));
+        vtp.setVenueCapacity(doc.getString("venueCapacity"));
+        vtp.setIsDisabilityAccessible(doc.getString("isDisabilityAccessible"));
+        vtp.setPeriod(doc.get("period", Document.class));
+        vtp.setDay(doc.getString("day"));
+        vtp.setReg(doc.getBoolean("reg"));
+        vtp.setEve(doc.getBoolean("eve"));
+        vtp.setWnd(doc.getBoolean("wnd"));
+        return vtp;
     }
+
+    
 }

@@ -28,7 +28,7 @@
                      </HBox.margin>
                   </TextField>
                   <JFXButton fx:id="btn_import" onAction="#handleImport" prefHeight="28.0" prefWidth="139.0" ripplerFill="#6f1717" stylesheets="@../Styles/buttons.css" text="Import From Excel" textAlignment="CENTER" />
-                  <JFXButton fx:id="btn_addNew" onAction="#handleAddNew" prefHeight="37.0" prefWidth="139.0" ripplerFill="#6f1717" stylesheets="@../Styles/buttons.css" text="Add New " textAlignment="CENTER">
+                  <JFXButton fx:id="btn_download" onAction="#handleDownload" prefHeight="31.0" prefWidth="161.0" ripplerFill="#6f1717" stylesheets="@../Styles/buttons.css" text="Download Template" textAlignment="CENTER">
                      <HBox.margin>
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </HBox.margin>

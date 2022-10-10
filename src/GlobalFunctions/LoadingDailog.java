@@ -50,7 +50,7 @@ public class LoadingDailog {
             Scene scene = new Scene(parent);
             scene.setFill(Color.TRANSPARENT); 
             stage.setScene(scene);
-            stage.showAndWait();
+              stage.showAndWait();
         } catch (IOException ex) {
             Logger.getLogger(AAMUSTEDTIMETABLEGENERATOR.class.getName()).log(Level.SEVERE, null, ex);
         }

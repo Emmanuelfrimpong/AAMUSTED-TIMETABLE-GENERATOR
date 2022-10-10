@@ -17,10 +17,14 @@ public class SpecialVenue {
     
     String course;
     String venue;
+
+
     public SpecialVenue(String course, String venue) {
         this.course = course;
         this.venue = venue;
+        
     }
+   
 
     public String getCourse() {
         return course;
@@ -37,6 +41,8 @@ public class SpecialVenue {
     public void setVenue(String venue) {
         this.venue = venue;
     }
+
+
     
 
 public ObservableMap<String, Object> getSpecialVenueMap() {
@@ -46,7 +52,7 @@ public ObservableMap<String, Object> getSpecialVenueMap() {
         return specialVenueMap;
     }
 public static SpecialVenue getSpecialVenueFromDoc(Document ob) {
-       return new SpecialVenue(ob.getString("course"), (String) ob.getString("venue"));
+       return new SpecialVenue( ob.getString("course"), (String) ob.getString("venue"));
     }
 
     public static SpecialVenue getSpecialVenueFromMap(ObservableMap<String, Object> map) {

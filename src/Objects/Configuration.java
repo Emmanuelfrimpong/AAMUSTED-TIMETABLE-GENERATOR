@@ -1,7 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+
 package Objects;
 
 import java.util.ArrayList;
@@ -17,7 +14,7 @@ import org.bson.types.ObjectId;
 public class Configuration {
 
     ObjectId _id;
-    List<String> days;
+    List<ObservableMap<String, Object>> days;
     List<ObservableMap<String, Object>> periods;
     List<ObservableMap<String, Object>> specialVenue;
     String laDay;
@@ -29,7 +26,7 @@ public class Configuration {
         this.specialVenue = new ArrayList<>();
     }
 
-    public Configuration(ObjectId _id, List<String> days, List<ObservableMap<String, Object>> periods, List<ObservableMap<String, Object>> specialVenue, String laDay, String laPeriod) {
+    public Configuration(ObjectId _id, List<ObservableMap<String, Object>> days, List<ObservableMap<String, Object>> periods, List<ObservableMap<String, Object>> specialVenue, String laDay, String laPeriod) {
         this._id = _id;
         this.days = days;
         this.periods = periods;
@@ -38,13 +35,16 @@ public class Configuration {
         this.laPeriod = laPeriod;
     }
 
-    public List<String> getDays() {
+    public List<ObservableMap<String, Object>> getDays() {
         return days;
     }
 
-    public void setDays(List<String> days) {
+    public void setDays(List<ObservableMap<String, Object>> days) {
         this.days = days;
     }
+
+
+   
 
     public List<ObservableMap<String, Object>> getPeriods() {
         return periods;
@@ -99,7 +99,7 @@ public class Configuration {
 
     public Configuration fromDocument(Document doc) {
         Configuration config = new Configuration();
-        config.setDays((List<String>) doc.get("days"));
+        config.setDays((List<ObservableMap<String, Object>>) doc.get("days"));
         config.setPeriods((List<ObservableMap<String, Object>>) doc.get("periods"));
         config.setLaDay(doc.getString("laDay"));
         config.setLaPeriod(doc.getString("laPeriod"));

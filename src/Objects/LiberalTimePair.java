@@ -19,26 +19,34 @@ public class LiberalTimePair {
     String period;
     String courseCode;
     String level;
-
-    public LiberalTimePair(ObjectId _id, String umiqueId, String day, String period, String courseCode, String level) {
-        this._id = _id;
-        this.umiqueId = umiqueId;
-        this.day = day;
-        this.period = period;
-        this.courseCode = courseCode;
-        this.level = level;
-    }
+    String lecturerName;
+    String lecturerEmail;
+    String lecturerPhone;
+    
+   
 
    
     public LiberalTimePair() {
       
     }
 
-    public ObjectId getId() {
+    public LiberalTimePair(ObjectId _id, String umiqueId, String day, String period, String courseCode, String level, String lecturerName, String lecturerEmail, String lecturerPhone) {
+        this._id = _id;
+        this.umiqueId = umiqueId;
+        this.day = day;
+        this.period = period;
+        this.courseCode = courseCode;
+        this.level = level;
+        this.lecturerName = lecturerName;
+        this.lecturerEmail = lecturerEmail;
+        this.lecturerPhone = lecturerPhone;
+    }
+
+    public ObjectId get_id() {
         return _id;
     }
 
-    public void setId(ObjectId _id) {
+    public void set_id(ObjectId _id) {
         this._id = _id;
     }
 
@@ -82,28 +90,58 @@ public class LiberalTimePair {
         this.level = level;
     }
 
+    public String getLecturerName() {
+        return lecturerName;
+    }
 
-    public Document getLiberalToDocument() {
-        Document liberalTimePairMap = new Document();
-        liberalTimePairMap.put("umiqueId", umiqueId);
-        liberalTimePairMap.put("day", day);
-        liberalTimePairMap.put("period", period);
-         liberalTimePairMap.put("_id", _id);
-         liberalTimePairMap.put("courseCode",courseCode) ;
-         liberalTimePairMap.put("level", level);
-        return liberalTimePairMap;
+    public void setLecturerName(String lecturerName) {
+        this.lecturerName = lecturerName;
+    }
+
+    public String getLecturerEmail() {
+        return lecturerEmail;
+    }
+
+    public void setLecturerEmail(String lecturerEmail) {
+        this.lecturerEmail = lecturerEmail;
+    }
+
+    public String getLecturerPhone() {
+        return lecturerPhone;
+    }
+
+    public void setLecturerPhone(String lecturerPhone) {
+        this.lecturerPhone = lecturerPhone;
     }
 
 
-   public static LiberalTimePair fromDocument(Document doc) {
-     LiberalTimePair obj = new LiberalTimePair();
-        obj.setUmiqueId(doc.getString("umiqueId"));
-        obj.setDay(doc.getString("day"));
-        obj.setPeriod(doc.getString("period"));
-        obj.setId(doc.getObjectId("_id"));
-         obj.setCourseCode(doc.getString("courseCode"));
-          obj.setLevel(doc.getString("level"));
-        return obj;
-   }
-    
+public Document toDocument() {
+        Document doc = new Document();
+        doc.append("uniqueId", this.umiqueId);
+        doc.append("day", this.day);
+        doc.append("period", this.period);
+        doc.append("courseCode", this.courseCode);
+        doc.append("level", this.level);
+        doc.append("lecturerName", this.lecturerName);
+        doc.append("lecturerEmail", this.lecturerEmail);
+        doc.append("lecturerPhone", this.lecturerPhone);
+        return doc;
+    }
+
+    public static LiberalTimePair fromDocument(Document doc) {
+        LiberalTimePair ltp = new LiberalTimePair();
+        ltp.set_id(doc.getObjectId("_id"));
+        ltp.setUmiqueId(doc.getString("uniqueId"));
+        ltp.setDay(doc.getString("day"));
+        ltp.setPeriod(doc.getString("period"));
+        ltp.setCourseCode(doc.getString("courseCode"));
+        ltp.setLevel(doc.getString("level"));
+        ltp.setLecturerName(doc.getString("lecturerName"));
+        ltp.setLecturerEmail(doc.getString("lecturerEmail"));
+        ltp.setLecturerPhone(doc.getString("lecturerPhone"));
+        return ltp;
+    }
+
+
+
 }

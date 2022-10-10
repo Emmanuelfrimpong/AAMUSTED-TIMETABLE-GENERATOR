@@ -2,6 +2,7 @@ package Controllers;
 
 import GlobalFunctions.GlobalFunctions;
 import MongoServices.DatabaseServices;
+import MongoServices.TableGeneration;
 import Objects.Configuration;
 import Objects.TableObject;
 import com.jfoenix.controls.JFXButton;
@@ -28,6 +29,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Region;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.StageStyle;
 
@@ -59,73 +61,69 @@ public class TablesPageController implements Initializable {
     }
 
     private void getTable() {
-        ObservableList<TableObject> tables = DBservices.getTables();     
-         ObservableList<TableObject> monday=FXCollections.observableArrayList();
-          ObservableList<TableObject> tuesday=FXCollections.observableArrayList();
-           ObservableList<TableObject> wednesday=FXCollections.observableArrayList();
-            ObservableList<TableObject> thursday=FXCollections.observableArrayList();
-             ObservableList<TableObject> friday=FXCollections.observableArrayList();
-             List<ObservableList<TableObject>>overALl=new ArrayList<>();
-             for(TableObject tb:tables){
-                 if(tb.getDay().equals("Monday")){
-                   
-                     monday.add(tb);
-                    }
-                    if(tb.getDay().equals("Tuesday")){
-                        tuesday.add(tb);
-                    }
+        ObservableList<TableObject> tables = DBservices.getTables();
+        ObservableList<TableObject> mondayList = FXCollections.observableArrayList();
+        ObservableList<TableObject> tuesdayList = FXCollections.observableArrayList();
+        ObservableList<TableObject> wednesdayList = FXCollections.observableArrayList();
+        ObservableList<TableObject> thursdayList = FXCollections.observableArrayList();
+        ObservableList<TableObject> fridayList = FXCollections.observableArrayList();
+        ObservableList<TableObject> saturdayList = FXCollections.observableArrayList();
+        ObservableList<TableObject> sundayList = FXCollections.observableArrayList();
+        List<ObservableList<TableObject>> overALl = new ArrayList<>();
+        for (TableObject tb : tables) {
+            if (tb.getDay().equals("Monday")) {
+                mondayList.add(tb);
+            }
+            if (tb.getDay().equals("Tuesday")) {
+                tuesdayList.add(tb);
+            }
+            if (tb.getDay().equals("Wednesday")) {
+                wednesdayList.add(tb);
+            }
+            if (tb.getDay().equals("Thursday")) {
+                thursdayList.add(tb);
+            }
+            if (tb.getDay().equals("Friday")) {
+                fridayList.add(tb);
+            }
+            if (tb.getDay().equals("Saturday")) {
+                saturdayList.add(tb);
+            }
+            if (tb.getDay().equals("Sunday")) {
+                sundayList.add(tb);
+            }
+        }
 
-                    if(tb.getDay().equals("Wednesday")){
-                        wednesday.add(tb);
-                    }
-
-                    if(tb.getDay().equals("Thursday")){
-                        thursday.add(tb);
-                    }
-
-                    if(tb.getDay().equals("Friday")){
-                        friday.add(tb);
-                    }        
-             }
-             int size=0;
-             if(!monday.isEmpty()){
-                 size++;
-                 overALl.add(monday);
-             }
-                if(!tuesday.isEmpty()){
-                    size++;
-                    overALl.add(tuesday);
-                }
-                if(!wednesday.isEmpty()){
-                    size++;
-                    overALl.add(wednesday);
-                }
-                if(!thursday.isEmpty()){
-                    size++;
-                    overALl.add(thursday);
-                }
-                if(!friday.isEmpty()){
-                    size++;
-                    overALl.add(friday);
-                }
-                
-             
-        int column = 0;
-        int row = 1;
+        if (!mondayList.isEmpty()) {
+            overALl.add(mondayList);
+        }
+        if (!tuesdayList.isEmpty()) {
+            overALl.add(tuesdayList);
+        }
+        if (!wednesdayList.isEmpty()) {
+            overALl.add(wednesdayList);
+        }
+        if (!thursdayList.isEmpty()) {
+            overALl.add(thursdayList);
+        }
+        if (!fridayList.isEmpty()) {
+            overALl.add(fridayList);
+        }
+        if (!saturdayList.isEmpty()) {
+            overALl.add(saturdayList);
+        }
+        if (!sundayList.isEmpty()) {
+            overALl.add(sundayList);
+        }
+      
         try {
-          
             for (int i = 0; i < overALl.size(); i++) {
                 FXMLLoader fxmlLoader = new FXMLLoader();
                 fxmlLoader.setLocation(getClass().getResource("/FrontEnds/TableItem.fxml"));
-                AnchorPane anchorPane = fxmlLoader.load();
+                StackPane anchorPane = fxmlLoader.load();
                 TableItemController itemController = fxmlLoader.getController();
-                itemController.setData(overALl.get(i));               
-                if (column == 3) {
-                    column = 0;
-                    row++;
-                }
-
-                grid.add(anchorPane, column++, row); //(child,column,row)
+                itemController.setData(overALl.get(i));            
+                grid.add(anchorPane, 1, i+1); //(child,column,row)
                 //set grid width
                 grid.setMinWidth(Region.USE_COMPUTED_SIZE);
                 grid.setPrefWidth(Region.USE_COMPUTED_SIZE);
@@ -136,7 +134,7 @@ public class TablesPageController implements Initializable {
                 grid.setPrefHeight(Region.USE_COMPUTED_SIZE);
                 grid.setMaxHeight(Region.USE_PREF_SIZE);
 
-                GridPane.setMargin(anchorPane, new Insets(10));
+                GridPane.setMargin(anchorPane, new Insets(5));
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -185,10 +183,10 @@ public class TablesPageController implements Initializable {
                 }
                 return null;
             });
-
             Optional<String> optionalResult = dialog.showAndWait();
             optionalResult.ifPresent((String results) -> {
-                DBservices.GenerateTable(results);
+                new TableGeneration().getData();
+                //DBservices.GenerateTable(results);
             });
         }
 

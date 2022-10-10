@@ -62,10 +62,7 @@ public class AAMUSTEDTIMETABLEGENERATOR extends Application {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/FrontEnds/SettingsPage.fxml"));
             root = (Parent) loader.load();
-            SettingsPageController controller = loader.getController();
-            controller.setLocation("New Stage");
             Scene scene = new Scene(root);
-
             stage.initStyle(StageStyle.UNDECORATED);
             stage.initStyle(StageStyle.TRANSPARENT);
             scene.setFill(Color.TRANSPARENT);

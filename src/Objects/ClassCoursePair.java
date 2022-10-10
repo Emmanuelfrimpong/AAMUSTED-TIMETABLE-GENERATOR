@@ -23,13 +23,12 @@ public class ClassCoursePair {
     String classLevel;
     String classSize;
     String classHasDisability;
+    String type;
 
     public ClassCoursePair() {
     }
 
-    public ClassCoursePair(String _id, ObjectId classId, ObjectId courseId, String className, String courseCode,
-            String courseTitle, String courseCreditHours, String courseSpecialVenue, String courseLecturerName,
-            String classLevel, String classSize, String classHasDisability) {
+    public ClassCoursePair(String _id, ObjectId classId, ObjectId courseId, String className, String courseCode, String courseTitle, String courseCreditHours, String courseSpecialVenue, String courseLecturerName, String classLevel, String classSize, String classHasDisability, String type) {
         this._id = _id;
         this.classId = classId;
         this.courseId = courseId;
@@ -42,7 +41,10 @@ public class ClassCoursePair {
         this.classLevel = classLevel;
         this.classSize = classSize;
         this.classHasDisability = classHasDisability;
+        this.type = type;
     }
+
+   
 
     public String get_id() {
         return _id;
@@ -140,6 +142,16 @@ public class ClassCoursePair {
         this.classHasDisability = classHasDisability;
     }
 
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    
+    
     public Document toDocument() {
         Document doc = new Document();
         doc.append("_id", _id);
@@ -154,6 +166,7 @@ public class ClassCoursePair {
         doc.append("classLevel", classLevel);
         doc.append("classSize", classSize);
         doc.append("classHasDisability", classHasDisability);
+         doc.append("type", type);
         return doc;
     }
 
@@ -171,6 +184,7 @@ public class ClassCoursePair {
         ccp.setClassLevel(doc.getString("classLevel"));
         ccp.setClassSize(doc.getString("classSize"));
         ccp.setClassHasDisability(doc.getString("classHasDisability"));
+        ccp.setType(doc.getString("type"));
         return ccp;
     }
 

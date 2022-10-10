@@ -6,7 +6,9 @@ import aamusted.timetable.generator.AAMUSTEDTIMETABLEGENERATOR;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.animation.Animation;
@@ -15,7 +17,6 @@ import javafx.animation.Timeline;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.Parent;
@@ -26,7 +27,6 @@ import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.stage.Screen;
@@ -128,15 +128,16 @@ public class GlobalFunctions {
     }
 
     public boolean verifyStudentExcel(Row titleRow) {
-
         String titleOne = titleRow.getCell(0).getStringCellValue().toLowerCase();
         String titleTwo = titleRow.getCell(1).getStringCellValue().toLowerCase();
         String titleThree = titleRow.getCell(2).getStringCellValue().toLowerCase();
         String titleFour = titleRow.getCell(3).getStringCellValue().toLowerCase();
         String titleFive = titleRow.getCell(4).getStringCellValue().toLowerCase();
-
-        return titleOne.equals(ExcellHeaders.getLevel()) && titleTwo.equals(ExcellHeaders.getClassName()) && titleThree.equals(ExcellHeaders.getClassSize())
-                && titleFour.equals(ExcellHeaders.getHasDisability()) && titleFive.equals(ExcellHeaders.getCourses());
+        return titleOne.equals(ExcellHeaders.getLevel()) && 
+                titleTwo.equals(ExcellHeaders.getClassName())
+                && titleThree.equals(ExcellHeaders.getClassSize())
+                && titleFour.equals(ExcellHeaders.getHasDisability()) 
+                && titleFive.equals(ExcellHeaders.getCourses());
 
     }
 
@@ -175,22 +176,31 @@ public class GlobalFunctions {
     }
 
     public boolean verifyExcelFile(Row classTitleRow, Row courseTitleRow) {
-        String classOne = classTitleRow.getCell(0).getStringCellValue().toLowerCase();
-        String classTwo = classTitleRow.getCell(1).getStringCellValue().toLowerCase();
-        String classThree = classTitleRow.getCell(2).getStringCellValue().toLowerCase();
-        String classFour = classTitleRow.getCell(3).getStringCellValue().toLowerCase();
-        String classFive = classTitleRow.getCell(4).getStringCellValue().toLowerCase();
-        String courseOne = courseTitleRow.getCell(0).getStringCellValue().toLowerCase();
-        String courseTwo = courseTitleRow.getCell(1).getStringCellValue().toLowerCase();
-        String courseThree = courseTitleRow.getCell(2).getStringCellValue().toLowerCase();
-        String courseFour = courseTitleRow.getCell(3).getStringCellValue().toLowerCase();
-        String courseFive = courseTitleRow.getCell(4).getStringCellValue().toLowerCase();
-        String courseSix = courseTitleRow.getCell(5).getStringCellValue().toLowerCase();
-        String courseSeven = courseTitleRow.getCell(6).getStringCellValue().toLowerCase();
-        return classOne.equals(ExcellHeaders.getLevel()) && classTwo.equals(ExcellHeaders.getClassName()) && classThree.equals(ExcellHeaders.getClassSize())
-                && classFour.equals(ExcellHeaders.getHasDisability()) && classFive.equals(ExcellHeaders.getCourses())
-                && courseOne.equals(ExcellHeaders.getCourseCode()) && courseTwo.equals(ExcellHeaders.getCouseTitle()) && courseThree.equals(ExcellHeaders.getCreaditHourse())
-                && courseFour.equals(ExcellHeaders.getSpecialVenue()) && courseFive.equals(ExcellHeaders.getLecturerName()) && courseSix.equals(ExcellHeaders.getLecturerEmail())
+        String classOne = classTitleRow.getCell(0).getStringCellValue();
+        String classTwo = classTitleRow.getCell(1).getStringCellValue();
+        String classThree = classTitleRow.getCell(2).getStringCellValue();
+        String classFour = classTitleRow.getCell(3).getStringCellValue();
+        String classFive = classTitleRow.getCell(4).getStringCellValue();
+          String classSix = classTitleRow.getCell(5).getStringCellValue();
+        String courseOne = courseTitleRow.getCell(0).getStringCellValue();
+        String courseTwo = courseTitleRow.getCell(1).getStringCellValue();
+        String courseThree = courseTitleRow.getCell(2).getStringCellValue();
+        String courseFour = courseTitleRow.getCell(3).getStringCellValue();
+        String courseFive = courseTitleRow.getCell(4).getStringCellValue();
+        String courseSix = courseTitleRow.getCell(5).getStringCellValue();
+        String courseSeven = courseTitleRow.getCell(6).getStringCellValue();
+        return classOne.equals(ExcellHeaders.getLevel()) 
+                && classTwo.equals(ExcellHeaders.getType()) 
+                && classThree.equals(ExcellHeaders.getClassName())
+                && classFour.equals(ExcellHeaders.getClassSize()) 
+                && classFive.equals(ExcellHeaders.getHasDisability())
+                &&classSix.equals(ExcellHeaders.getCourses())
+                && courseOne.equals(ExcellHeaders.getCourseCode()) 
+                && courseTwo.equals(ExcellHeaders.getCouseTitle()) 
+                && courseThree.equals(ExcellHeaders.getCreaditHourse())
+                && courseFour.equals(ExcellHeaders.getSpecialVenue()) 
+                && courseFive.equals(ExcellHeaders.getLecturerName()) 
+                && courseSix.equals(ExcellHeaders.getLecturerEmail())
                 && courseSeven.equals(ExcellHeaders.getLecturerPhone());
 
     }
@@ -200,48 +210,40 @@ public class GlobalFunctions {
         alert.initStyle(StageStyle.UNDECORATED);
         alert.setHeaderText(null);
         alert.getDialogPane().getStylesheets().add("/Styles/dialog.css");
-
         return alert;
     }
 
-    public Stage LoadingDailog(String message) {
-        Stage loadingStage = new Stage();
-        RingProgressIndicator indicator = new RingProgressIndicator();
-        indicator.makeIndeterminate();
-        Screen screen = Screen.getPrimary();
-        Rectangle2D bounds = screen.getVisualBounds();
-        VBox cont = new VBox();
-        cont.setAlignment(Pos.CENTER);
-        Label lb = new Label(message);
-        cont.getChildren().addAll(indicator, lb);
-        Scene scene = new Scene(cont);
-        loadingStage.setX(bounds.getMinX());
-        loadingStage.setY(bounds.getMinY());
-        loadingStage.setWidth(bounds.getWidth());
-        loadingStage.setHeight(bounds.getHeight());
-        loadingStage.setOpacity(0.95);
-        loadingStage.setResizable(false);
-        loadingStage.initStyle(StageStyle.UNDECORATED);
-        loadingStage.initStyle(StageStyle.TRANSPARENT);
-        scene.setFill(Color.TRANSPARENT);
-        loadingStage.setScene(scene);
-
-        return loadingStage;
-
-    }
+  
 
     public boolean verifyAfricanSheet(Row courseTitleRow) {
-        String courseOne = courseTitleRow.getCell(0).getStringCellValue().toLowerCase();
-        String courseTwo = courseTitleRow.getCell(1).getStringCellValue().toLowerCase();
-        String courseThree = courseTitleRow.getCell(2).getStringCellValue().toLowerCase();
-        String courseFour = courseTitleRow.getCell(3).getStringCellValue().toLowerCase();
-        String courseFive = courseTitleRow.getCell(4).getStringCellValue().toLowerCase();
-        String courseSix = courseTitleRow.getCell(5).getStringCellValue().toLowerCase();
-        String courseSeven = courseTitleRow.getCell(6).getStringCellValue().toLowerCase();
+        String courseOne = courseTitleRow.getCell(0).getStringCellValue();
+        String courseTwo = courseTitleRow.getCell(1).getStringCellValue();
+        String courseThree = courseTitleRow.getCell(2).getStringCellValue();
+        String courseFour = courseTitleRow.getCell(3).getStringCellValue();
+        String courseFive = courseTitleRow.getCell(4).getStringCellValue();
+        String courseSix = courseTitleRow.getCell(5).getStringCellValue();
+        String courseSeven = courseTitleRow.getCell(6).getStringCellValue();
 
-        return courseOne.equals(ExcellHeaders.getCourseCode()) && courseTwo.equals(ExcellHeaders.getCouseTitle()) && courseThree.equals(ExcellHeaders.getCreaditHourse())
-                && courseFour.equals(ExcellHeaders.getSpecialVenue()) && courseFive.equals(ExcellHeaders.getLecturerName()) && courseSix.equals(ExcellHeaders.getLecturerEmail())
+        
+        System.out.println("courseOne "+courseOne+"== "+ExcellHeaders.getCourseCode());
+        System.out.println("courseTwo "+courseTwo+"== "+ExcellHeaders.getCouseTitle());
+        System.out.println("courseThree "+courseThree+"== "+ExcellHeaders.getCreaditHourse());
+        System.out.println("courseFour "+courseFour+"== "+ExcellHeaders.getSpecialVenue());
+        System.out.println("courseFive "+courseFive+"== "+ExcellHeaders.getLecturerName());
+        System.out.println("courseSix "+courseSix+"== "+ExcellHeaders.getLecturerEmail());
+        System.out.println("courseSeven "+courseSeven+"== "+ExcellHeaders.getLecturerPhone());
+        return courseOne.equals(ExcellHeaders.getCourseCode()) 
+                && courseTwo.equals(ExcellHeaders.getCouseTitle()) 
+                && courseThree.equals(ExcellHeaders.getCreaditHourse())
+                && courseFour.equals(ExcellHeaders.getSpecialVenue()) 
+                && courseFive.equals(ExcellHeaders.getLecturerName())
+                && courseSix.equals(ExcellHeaders.getLecturerEmail())
                 && courseSeven.equals(ExcellHeaders.getLecturerPhone());
 
     }
+
+    @SuppressWarnings("unchecked")
+public static <T> List<T> newFixedSizeList(int size) {
+    return (List<T>)Arrays.asList(new Object[size]);
+}
 }

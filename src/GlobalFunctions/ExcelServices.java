@@ -4,7 +4,11 @@
  */
 package GlobalFunctions;
 
+import Controllers.DepartmentFilesController;
+import Objects.CoursesObject;
 import Objects.ExcellHeaders;
+import Objects.StudentsObject;
+import java.awt.Desktop;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -16,6 +20,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.collections.ObservableList;
+import javafx.collections.ObservableMap;
+import javafx.concurrent.Service;
+import javafx.concurrent.Task;
+import javafx.concurrent.WorkerStateEvent;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
@@ -23,6 +32,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.DialogPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javax.swing.JFileChooser;
 import org.apache.poi.hssf.usermodel.HSSFFont;
@@ -42,42 +52,41 @@ public class ExcelServices {
     FileOutputStream fileOut;
     GlobalFunctions GF = new GlobalFunctions();
 
-    public void ExportDepartment() {
+    public void ExportDepartment(String results) {
+        LoadingDailog loading = new LoadingDailog("Downloading Data........");
+        Service<File> service = new Service< File>() {
+            @Override
+            protected Task< File> createTask() {
+                return new Task<File>() {
+                    @Override
+                    protected File call() throws Exception {
+                        if (results.equals("For Department")) {
+                            return createForDepartment();
+                        } else {
+                            return createForAfrican();
+                        }
 
-        List<String> departments = new ArrayList();
-        departments.add("For Department");
-        departments.add("For Libral/African Studies");
-        ButtonType submit = new ButtonType("Submit Data", ButtonBar.ButtonData.OK_DONE);
-        ButtonType cancel = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
-        Dialog<String> dialog = new Dialog<>();
-        dialog.setHeaderText("Select Source of file and proceed");
-        DialogPane dialogPane = dialog.getDialogPane();
-        dialog.initStyle(StageStyle.UNDECORATED);
-        dialogPane.getStylesheets().add("/Styles/dialogStyle.css");
-        dialogPane.getButtonTypes().addAll(submit, cancel);
-        ComboBox<String> comboBox = new ComboBox<>();
-        comboBox.getItems().addAll(departments);
-        comboBox.getSelectionModel().selectFirst();  
-        dialogPane.setContent(new VBox(8, comboBox));
-        dialog.setResultConverter((ButtonType button) -> {
-            if (button == submit) {
-                return comboBox.getValue();
+                    }
+                };
             }
-            return null;
-        });
-      
-        Optional<String> optionalResult = dialog.showAndWait();
-        optionalResult.ifPresent((String results) -> {
-            if (results.equals("For Department")) {
-                createForDepartment();
-            } else {
-                createForAfrican();
+        };
+        service.setOnRunning((WorkerStateEvent event) -> loading.show());
+        service.setOnSucceeded((WorkerStateEvent event) -> {
+            loading.close();
+            try {
+                String file = new JFileChooser().getFileSystemView().getDefaultDirectory().toString() + "/TIME TABLE GEN";
+                if (new File(file).exists()) {
+                    Desktop.getDesktop().open(new File(file));
+                }
+            } catch (IOException ex) {
+                Logger.getLogger(DepartmentFilesController.class.getName()).log(Level.SEVERE, null, ex);
             }
         });
+        service.start();
 
     }
 
-    private void createForDepartment() {
+    private File createForDepartment() {
         final String folder = new JFileChooser().getFileSystemView().getDefaultDirectory().toString() + "/TIME TABLE GEN";
         Path path = Paths.get(folder);
         try {
@@ -112,22 +121,26 @@ public class ExcelServices {
             sheet.setDefaultColumnWidth(width);
 
             Cell headerCell1 = rowhead.createCell(0);
-            headerCell1.setCellValue( ExcellHeaders.getLevel());
+            headerCell1.setCellValue(ExcellHeaders.getLevel());
             headerCell1.setCellStyle(headerStyle);
 
-            Cell headerCell2 = rowhead.createCell(1);
+            Cell headerCell6 = rowhead.createCell(1);
+            headerCell6.setCellValue(ExcellHeaders.getType());
+            headerCell6.setCellStyle(headerStyle);
+
+            Cell headerCell2 = rowhead.createCell(2);
             headerCell2.setCellValue(ExcellHeaders.getClassName());
             headerCell2.setCellStyle(headerStyle);
 
-            Cell headerCell3 = rowhead.createCell(2);
+            Cell headerCell3 = rowhead.createCell(3);
             headerCell3.setCellValue(ExcellHeaders.getClassSize());
             headerCell3.setCellStyle(headerStyle);
 
-            Cell headerCell4 = rowhead.createCell(3);
+            Cell headerCell4 = rowhead.createCell(4);
             headerCell4.setCellValue(ExcellHeaders.getHasDisability());
             headerCell4.setCellStyle(headerStyle);
 
-            Cell headerCell5 = rowhead.createCell(4);
+            Cell headerCell5 = rowhead.createCell(5);
             headerCell5.setCellValue(ExcellHeaders.getCourses());
             headerCell5.setCellStyle(headerStyle);
             sheet.createFreezePane(0, 1);
@@ -172,13 +185,17 @@ public class ExcelServices {
             try {
                 fileOut.close();
                 workbook.close();
+
             } catch (IOException x) {
 
             }
         }
+        File file = new File(folder);
+        return file;
+
     }
 
-    private void createForAfrican() {
+    private File createForAfrican() {
         final String folder = new JFileChooser().getFileSystemView().getDefaultDirectory().toString() + "/TIME TABLE GEN";
         Path path = Paths.get(folder);
         try {
@@ -241,15 +258,113 @@ public class ExcelServices {
             sheet2Header7.setCellStyle(headerStyle);
             fileOut = new FileOutputStream(filename);
             workbook.write(fileOut);
+
         } catch (IOException ex) {
             GF.inforAlert("Error", ex.getMessage(), Alert.AlertType.ERROR);
+            return new File("");
         } finally {
             try {
                 fileOut.close();
                 workbook.close();
+
             } catch (IOException x) {
 
             }
+            return new File(folder);
         }
+
+    }
+
+    public void ExportVenue() {
+        LoadingDailog loading = new LoadingDailog("Downloading Data........");
+        Service<File> service = new Service< File>() {
+            @Override
+            protected Task< File> createTask() {
+                return new Task<File>() {
+                    @Override
+                    protected File call() throws Exception {
+                        return createVenueFile();
+                    }
+                };
+            }
+        };
+        service.setOnRunning((WorkerStateEvent event) -> loading.show());
+        service.setOnSucceeded((WorkerStateEvent event) -> {
+            loading.close();
+            try {
+                String file = new JFileChooser().getFileSystemView().getDefaultDirectory().toString() + "/TIME TABLE GEN";
+                if (new File(file).exists()) {
+                    Desktop.getDesktop().open(new File(file));
+                }
+            } catch (IOException ex) {
+                Logger.getLogger(DepartmentFilesController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        });
+        service.start();
+    }
+
+    private File createVenueFile() {
+        final String folder = new JFileChooser().getFileSystemView().getDefaultDirectory().toString() + "/TIME TABLE GEN";
+        Path path = Paths.get(folder);
+        try {
+            Files.createDirectories(path);
+        } catch (IOException ex) {
+            Logger.getLogger(ExcelServices.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        final String filename = folder + "/venues.xlsx";
+        XSSFWorkbook workbook = new XSSFWorkbook();
+        try {
+            File file = new File(filename);
+            if (file.exists()) {
+                file.delete();
+            }
+            CellStyle headerStyle = workbook.createCellStyle();
+            headerStyle.setLocked(true);
+            XSSFFont font = workbook.createFont();
+            font.setFontName(HSSFFont.FONT_ARIAL);
+            font.setFontHeightInPoints((short) 10);
+            font.setBold(true);
+            headerStyle.setFont(font);
+
+            CellStyle unlockedCellStyle = workbook.createCellStyle();
+            unlockedCellStyle.setLocked(false);
+            CellStyle lockedCellStyle = workbook.createCellStyle();
+            lockedCellStyle.setLocked(true);
+            int width = 25;
+
+            //new sheet==============================================================================
+            XSSFSheet sheet2 = workbook.createSheet("Venues");
+            //sheet2.protectSheet("");
+            XSSFRow rowhead2 = sheet2.createRow((short) 0);
+            sheet2.setDefaultColumnWidth(width);
+            
+            Cell sheet2Header1 = rowhead2.createCell(0);
+            sheet2Header1.setCellValue(ExcellHeaders.getRoomName());
+            sheet2Header1.setCellStyle(headerStyle);
+
+            Cell sheet2Header2 = rowhead2.createCell(1);
+            sheet2Header2.setCellValue(ExcellHeaders.getCapacity());
+            sheet2Header2.setCellStyle(headerStyle);
+
+            Cell sheet2Header3 = rowhead2.createCell(2);
+            sheet2Header3.setCellValue(ExcellHeaders.getDisbility());
+            sheet2Header3.setCellStyle(headerStyle);        
+            fileOut = new FileOutputStream(filename);
+            workbook.write(fileOut);
+
+        } catch (IOException ex) {
+            GF.inforAlert("Error", ex.getMessage(), Alert.AlertType.ERROR);
+            return new File("");
+        } finally {
+            try {
+                fileOut.close();
+                workbook.close();
+
+            } catch (IOException x) {
+
+            }
+            return new File(folder);
+        }
+
     }
 }

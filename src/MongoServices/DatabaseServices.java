@@ -5,10 +5,11 @@
 package MongoServices;
 
 import GlobalFunctions.GlobalFunctions;
-import GlobalFunctions.RingProgressIndicator;
+import GlobalFunctions.LoadingDailog;
 import Objects.ClassCoursePair;
 import Objects.Configuration;
 import Objects.CoursesObject;
+import Objects.DaysObject;
 import Objects.ExcellHeaders;
 import Objects.LiberalTimePair;
 import Objects.PeriodsObject;
@@ -67,15 +68,15 @@ import javafx.scene.layout.VBox;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 
 public class DatabaseServices {
-    
+
     GlobalFunctions GF = new GlobalFunctions();
-    
+
     public MongoClient databaseConnection() {
         String connetionPath = "mongodb://localhost:27017/?readPreference=primary&appname=MongoDB%20Compass&directConnection=true&ssl=false";
         return MongoClients.create(connetionPath);
-        
+
     }
-    
+
     public void createConfigurations() {
         MongoDatabase sampleTrainingDB = this.databaseConnection().getDatabase("AAMUSTED_DB");
         MongoCollection<Document> adminCollection = sampleTrainingDB.getCollection("Admin");
@@ -89,14 +90,14 @@ public class DatabaseServices {
             adminCollection.insertOne(newAdmin);
         }
     }
-    
+
     public Document updateDocument(String collection, Bson filter, Bson updates) {
         MongoDatabase sampleTrainingDB = this.databaseConnection().getDatabase("AAMUSTED_DB");
         MongoCollection<Document> dataCollection = sampleTrainingDB.getCollection(collection);
         FindOneAndUpdateOptions optionAfter = new FindOneAndUpdateOptions().returnDocument(ReturnDocument.AFTER);
         return dataCollection.findOneAndUpdate(filter, updates, optionAfter);
     }
-    
+
     public boolean loginAdmin(String userName, String password) {
         MongoDatabase sampleTrainingDB = this.databaseConnection().getDatabase("AAMUSTED_DB");
         MongoCollection<Document> adminCollection = sampleTrainingDB.getCollection("Admin");
@@ -106,7 +107,7 @@ public class DatabaseServices {
         Document admin = adminCollection.find(criteria).first();
         return admin != null && !admin.isEmpty();
     }
-    
+
     public ObservableMap<String, Object> getDepartmentData(String databaseName) {
         ObservableMap<String, Object> data = FXCollections.observableHashMap();
         ObservableList<CoursesObject> listOfCourses = FXCollections.observableArrayList();
@@ -115,30 +116,31 @@ public class DatabaseServices {
             MongoDatabase database = this.databaseConnection().getDatabase(databaseName);
             MongoCollection<Document> classCollection = database.getCollection("Student_Class");
             MongoCollection<Document> CourseCollection = database.getCollection("Courses");
-            
+
             MongoCursor<Document> cursor = classCollection.find().iterator();
             while (cursor.hasNext()) {
                 listOfStudents.add(new StudentsObject().fromDocument(cursor.next()));
             }
-            
+
             MongoCursor<Document> cursor2 = CourseCollection.find().iterator();
             while (cursor2.hasNext()) {
                 listOfCourses.add(new CoursesObject().fromDocument(cursor2.next()));
             }
-            
+
             data.put("classes", listOfStudents);
             data.put("courses", listOfCourses);
-            
+
         } catch (Exception error) {
             Logger.getLogger(DatabaseServices.class.getName()).log(Level.SEVERE, null, error);
         }
         return data;
-        
+
     }
-    
+
     boolean saved = false;
-    
+
     public ObservableMap<String, Object> LoadStudentsToDatabase(File file) throws FileNotFoundException, IOException {
+        LoadingDailog loading = new LoadingDailog("Importing Data........");
         try {
             List<String> departments = new ArrayList();
             departments.add("Liberal/African Studies");
@@ -174,18 +176,15 @@ public class DatabaseServices {
             });
             Optional<String> optionalResult = dialog.showAndWait();
             optionalResult.ifPresent((String results) -> {
-                RingProgressIndicator indicator = new RingProgressIndicator();
-                indicator.makeIndeterminate();
+                loading.show();
                 try ( FileInputStream inputStream = new FileInputStream(file);  Workbook workbook = new XSSFWorkbook(inputStream)) {
-                    
                     if (results.equals("Liberal/African Studies")) {
-                        
                         Sheet courseSheet = workbook.getSheetAt(0);
-                        
                         Row courseTitleRow = courseSheet.getRow(0);
                         if (GF.verifyAfricanSheet(courseTitleRow)) {
                             saved = ReadAfricanData(results, courseSheet);
                         } else {
+                            loading.close();
                             saved = false;
                             GF.inforAlert("Invalid File", "The selected Excel file do not match stated parameters",
                                     Alert.AlertType.ERROR);
@@ -198,31 +197,33 @@ public class DatabaseServices {
                         if (GF.verifyExcelFile(classTitleRow, courseTitleRow)) {
                             saved = ReadData(results, classSheet, courseSheet);
                         } else {
+                            loading.close();
                             saved = false;
                             GF.inforAlert("Invalid File", "The selected Excel file do not match stated parameters",
                                     Alert.AlertType.ERROR);
                         }
                     }
-                    
+                    loading.close();
                 } catch (FileNotFoundException ex) {
-                    
+                    loading.close();
                     saved = false;
                     GF.inforAlert("File Error", ex.getMessage(), Alert.AlertType.ERROR);
-                    
+
                 } catch (IOException ex) {
+                    loading.close();
                     saved = false;
                     GF.inforAlert("File Error", ex.getMessage(), Alert.AlertType.ERROR);
                 }
             });
         } catch (Exception error) {
-            
+            loading.close();
             GF.inforAlert("Excel Error", error.toString(), Alert.AlertType.ERROR);
         }
         ObservableMap<String, Object> data = FXCollections.observableHashMap();
         data.put("isSaved", saved);
         return data;
     }
-    
+
     private boolean ReadData(String department, Sheet classSheet, Sheet courseSheet) {
         String timeStamp = new SimpleDateFormat("yyyy.MM.dd.HH.mm a").format(Calendar.getInstance().getTime());
         Row classTitleRow = classSheet.getRow(0);
@@ -236,7 +237,7 @@ public class DatabaseServices {
                 Cell cell = cellIterator.next();
                 cell.setCellType(CellType.STRING);
             }
-            String one = "Blank", two = "Blank", three = "Blank", four = "Blank", five = "Blank";
+            String one = "Blank", two = "Blank", three = "Blank", four = "Blank", five = "Blank", six = "Blank";
             if (nextRow != classTitleRow) {
                 if (nextRow.getCell(0) != null) {
                     one = nextRow.getCell(0) != null || nextRow.getCell(0).getCellType() != CellType.BLANK
@@ -263,15 +264,18 @@ public class DatabaseServices {
                             ? nextRow.getCell(4).getStringCellValue()
                             : "Blank";
                 }
+                if (nextRow.getCell(5) != null) {
+                    six = nextRow.getCell(5) != null || nextRow.getCell(5).getCellType() != CellType.BLANK
+                            ? nextRow.getCell(5).getStringCellValue()
+                            : "Blank";
+                }
                 List<String> courses = new ArrayList<>();
-                courses.addAll(Arrays.asList(five.split(",")));
-                studentData.add(
-                        new StudentsObject(one, two, three, four, courses, department, timeStamp,
-                                new ObjectId()));
+                courses.addAll(Arrays.asList(six.split(",")));
+                studentData.add(new StudentsObject(new ObjectId(), one, two, three, four, five, courses, department, timeStamp));
             }
-            
+
         }
-        
+
         Iterator<Row> iterator2 = courseSheet.iterator();
         ObservableList<CoursesObject> courseData = FXCollections.observableArrayList();
         while (iterator2.hasNext()) {
@@ -280,7 +284,7 @@ public class DatabaseServices {
             while (cellIterator.hasNext()) {
                 Cell cell = cellIterator.next();
                 cell.setCellType(CellType.STRING);
-                
+
             }
             if (nextRow != courseTitleRow) {
                 String one = "Blank", two = "Blank", three = "Blank", four = "Blank", five = "Blank", six = "Blank", seven = "Blank";
@@ -319,16 +323,16 @@ public class DatabaseServices {
                             ? nextRow.getCell(6).getStringCellValue()
                             : "Blank";
                 }
-                
+
                 courseData.add(new CoursesObject(one, two, three, four, five, six, seven, new ObjectId(), department));
             }
-            
+
         }
-        
+
         return saveData(studentData, courseData);
-        
+
     }
-    
+
     public void saveStudentClass(StudentsObject data) {
         MongoDatabase database = this.databaseConnection().getDatabase("AAMUSTED_DB");
         MongoCollection<Document> dataCollection = database.getCollection("Student_Class");
@@ -336,9 +340,9 @@ public class DatabaseServices {
         if (admin == null || admin.isEmpty()) {
             dataCollection.insertOne(data.toDocument());
         }
-        
+
     }
-    
+
     private boolean saveData(ObservableList<StudentsObject> studentData, ObservableList<CoursesObject> courseData) {
         try {
             for (StudentsObject student : studentData) {
@@ -351,9 +355,9 @@ public class DatabaseServices {
         } catch (Exception error) {
             return false;
         }
-        
+
     }
-    
+
     private void saveCourse(CoursesObject course) {
         MongoDatabase database = this.databaseConnection().getDatabase("AAMUSTED_DB");
         MongoCollection<Document> dataCollection = database.getCollection("Courses");
@@ -361,15 +365,15 @@ public class DatabaseServices {
         if (admin == null || admin.isEmpty()) {
             dataCollection.insertOne(course.toDocument());
         }
-        
+
     }
-    
+
     public Document deleteData(String collection, ObjectId id) {
         MongoDatabase database = this.databaseConnection().getDatabase("AAMUSTED_DB");
         MongoCollection<Document> dataCollection = database.getCollection(collection);
         return dataCollection.findOneAndDelete(new Document("_id", id));
     }
-    
+
     private void saveVenue(Venue venue) {
         MongoDatabase database = this.databaseConnection().getDatabase("AAMUSTED_DB");
         MongoCollection<Document> dataCollection = database.getCollection("Venue");
@@ -377,9 +381,9 @@ public class DatabaseServices {
         if (admin == null || admin.isEmpty()) {
             dataCollection.insertOne(venue.toDocument());
         }
-        
+
     }
-    
+
     public ObservableList<Venue> LoadVenue(File selectedFile) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION,
                 "Are you sure you want to save the list of venues?",
@@ -389,7 +393,7 @@ public class DatabaseServices {
         alert.getDialogPane().setMinSize(400, 200);
         alert.showAndWait();
         if (alert.getResult() == ButtonType.YES) {
-            
+
             try {
                 FileInputStream file = new FileInputStream(selectedFile);
                 XSSFWorkbook workbook = new XSSFWorkbook(file);
@@ -405,13 +409,13 @@ public class DatabaseServices {
                         while (cellIterator.hasNext()) {
                             Cell cell = cellIterator.next();
                             cell.setCellType(CellType.STRING);
-                            
+
                         }
                         if (nextRow.getRowNum() == 0) {
                             continue;
                         }
                         String one = "Blank", two = "Blank", three = "Blank";
-                        
+
                         if (nextRow.getCell(0) != null) {
                             one = nextRow.getCell(0) != null || nextRow.getCell(0).getCellType() != CellType.BLANK
                                     ? nextRow.getCell(0).getStringCellValue()
@@ -429,10 +433,10 @@ public class DatabaseServices {
                         }
                         Venue venue = new Venue(one, two, three);
                         venue.set_id(new ObjectId());
-                        
+
                         saveVenue(venue);
                     }
-                    
+
                 } else {
                     GF.inforAlert("Invalid File", "The file you selected is not a valid venue file", Alert.AlertType.ERROR);
                 }
@@ -444,7 +448,7 @@ public class DatabaseServices {
         }
         return getVenues();
     }
-    
+
     public ObservableList<Venue> getVenues() {
         ObservableList<Venue> venueData = FXCollections.observableArrayList();
         try {
@@ -459,9 +463,7 @@ public class DatabaseServices {
         }
         return venueData;
     }
-    
 
-    
     public Configuration getConfig() {
         MongoDatabase database = this.databaseConnection().getDatabase("AAMUSTED_DB");
         MongoCollection<Document> dataCollection = database.getCollection("Config");
@@ -472,7 +474,7 @@ public class DatabaseServices {
             return new Configuration();
         }
     }
-    
+
     private boolean ReadAfricanData(String results, Sheet courseSheet) {
         Iterator<Row> iterator2 = courseSheet.iterator();
         ObservableList<CoursesObject> courseData = FXCollections.observableArrayList();
@@ -523,135 +525,147 @@ public class DatabaseServices {
                 }
                 courseData.add(new CoursesObject(one, two, three, four, five, six, seven, new ObjectId(), results));
             }
-            
+
         }
         for (CoursesObject course : courseData) {
             saveCourse(course);
         }
         return true;
-        
+
     }
-    
-    public void saveConfig(Configuration config) {
+
+    public List<MongoCursor<Document>> saveConfig(Configuration config) {
+
         MongoDatabase database = this.databaseConnection().getDatabase("AAMUSTED_DB");
         for (ObservableMap<String, Object> map : config.getSpecialVenue()) {
             SpecialVenue venue = SpecialVenue.getSpecialVenueFromMap(map);
             Bson updates = set("specialVenue", venue.getVenue());
             UpdateCourse(eq("code", venue.getCourse()), updates);
         }
-        
+
         MongoCollection<Document> dataCollection = database.getCollection("Config");
         Document setting = dataCollection.find(new Document("_id", config.getId())).first();
         if (setting != null && !setting.isEmpty()) {
             dataCollection.deleteOne(new Document("_id", config.getId()));
-            
+
         }
         config.setId(new ObjectId());
         dataCollection.insertOne(config.toDocument());
+        MongoCollection<Document> tableCollection = database.getCollection("Tables");
+        tableCollection.drop();
         
-        CreatePairs(config);
-        
+        return CreatePairs(config);
+
     }
-    
+
     private void UpdateCourse(Bson eq, Bson updates) {
         MongoDatabase database = this.databaseConnection().getDatabase("AAMUSTED_DB");
         MongoCollection<Document> dataCollection = database.getCollection("Courses");
         FindOneAndUpdateOptions optionAfter = new FindOneAndUpdateOptions().returnDocument(ReturnDocument.AFTER);
         dataCollection.findOneAndUpdate(eq, updates, optionAfter);
     }
-    
-    private void CreatePairs(Configuration config) {
-        CreateVTP(config);
-        CreateClassCourse();
-        CreateLTP(config);
-        
+
+    private List<MongoCursor<Document>> CreatePairs(Configuration config) {
+        List<MongoCursor<Document>> data = new ArrayList<>();
+        MongoCursor<Document> VTP = CreateVTP(config);
+        MongoCursor<Document> CCP = CreateClassCourse();
+        MongoCursor<Document> LTP = CreateLTP(config);
+        data.add(VTP);
+        data.add(CCP);
+        data.add(LTP);
+        return data;
+
     }
-    
-    public void CreateClassCourse() {
-        new Thread(() -> {
-            MongoDatabase database = this.databaseConnection().getDatabase("AAMUSTED_DB");
-            MongoCollection<Document> classCollection = database.getCollection("Student_Class");
-            MongoCollection<Document> CourseCollection = database.getCollection("Courses");
-            ObservableList<CoursesObject> listOfCourses = FXCollections.observableArrayList();
-            ObservableList<StudentsObject> listOfStudents = FXCollections.observableArrayList();
-            MongoCursor<Document> cursor = classCollection.find().iterator();
-            while (cursor.hasNext()) {
-                listOfStudents.add(new StudentsObject().fromDocument(cursor.next()));
+
+    public MongoCursor<Document> CreateClassCourse() {
+        MongoDatabase database = this.databaseConnection().getDatabase("AAMUSTED_DB");
+        MongoCollection<Document> classCollection = database.getCollection("Student_Class");
+        MongoCollection<Document> CourseCollection = database.getCollection("Courses");
+        ObservableList<CoursesObject> listOfCourses = FXCollections.observableArrayList();
+        ObservableList<StudentsObject> listOfStudents = FXCollections.observableArrayList();
+        MongoCursor<Document> cursor = classCollection.find().iterator();
+        while (cursor.hasNext()) {
+            listOfStudents.add(new StudentsObject().fromDocument(cursor.next()));
+        }
+
+        MongoCursor<Document> cursor2 = CourseCollection.find().iterator();
+        while (cursor2.hasNext()) {
+            CoursesObject data = new CoursesObject().fromDocument(cursor2.next());
+            if (!data.getDepartment().equals("Liberal/African Studies")) {
+                listOfCourses.add(data);
             }
-            
-            MongoCursor<Document> cursor2 = CourseCollection.find().iterator();
-            while (cursor2.hasNext()) {
-                CoursesObject data = new CoursesObject().fromDocument(cursor2.next());
-                if (!data.getDepartment().equals("Liberal/African Studies")) {
-                    listOfCourses.add(data);
-                }
-            }
-            
-            for (StudentsObject studentClass : listOfStudents) {
-                List courses = studentClass.getCourses();
-                for (Object courseCode : courses) {
-                    for (CoursesObject course : listOfCourses) {
-                        if (course.getCode().toLowerCase() == null ? courseCode.toString().toLowerCase() == null
-                                : course.getCode().toLowerCase().equals(courseCode.toString().toLowerCase())) {
-                            ClassCoursePair ccp = new ClassCoursePair();
-                            String id = studentClass.get_id().toString() + course.getId().toString();
-                            int ccpId = id.hashCode();
-                            ccp.set_id(String.valueOf(ccpId));
-                            ccp.setClassHasDisability(studentClass.getHasDisability());
-                            ccp.setClassId(studentClass.get_id());
-                            ccp.setClassName(studentClass.getName());
-                            ccp.setCourseCode(course.getCode());
-                            ccp.setClassLevel(studentClass.getLevel());
-                            ccp.setCourseTitle(course.getTitle());
-                            ccp.setCourseCreditHours(course.getCreditHours());
-                            ccp.setCourseLecturerName(course.getLecturerName());
-                            ccp.setCourseSpecialVenue(course.getSpecialVenue());
-                            ccp.setCourseId(course.getId());
-                            ccp.setClassSize(studentClass.getSize());
-                            MongoCollection<Document> dataCollection = database.getCollection("ClassCoursePair");
-                            Document admin = dataCollection.find(new Document("_id", ccp.get_id())).first();
-                            if (admin == null || admin.isEmpty()) {
-                                dataCollection.insertOne(ccp.toDocument());
-                            }
+        }
+        MongoCollection<Document> dataCollection = database.getCollection("ClassCoursePair");
+        for (StudentsObject studentClass : listOfStudents) {
+            List courses = studentClass.getCourses();
+            for (Object courseCode : courses) {
+                for (CoursesObject course : listOfCourses) {
+                    if (course.getCode().toLowerCase() == null ? courseCode.toString().toLowerCase() == null
+                            : course.getCode().toLowerCase().equals(courseCode.toString().toLowerCase())) {
+                        ClassCoursePair ccp = new ClassCoursePair();
+                        String id = studentClass.get_id().toString() + course.getId().toString();
+                        int ccpId = id.hashCode();
+                        ccp.set_id(String.valueOf(ccpId));
+                        ccp.setClassHasDisability(studentClass.getHasDisability());
+                        ccp.setClassId(studentClass.get_id());
+                        ccp.setClassName(studentClass.getName());
+                        ccp.setCourseCode(course.getCode());
+                        ccp.setClassLevel(studentClass.getLevel());
+                        ccp.setCourseTitle(course.getTitle());
+                        ccp.setCourseCreditHours(course.getCreditHours());
+                        ccp.setCourseLecturerName(course.getLecturerName());
+                        ccp.setCourseSpecialVenue(course.getSpecialVenue());
+                        ccp.setCourseId(course.getId());
+                        ccp.setClassSize(studentClass.getSize());
+                        ccp.setType(studentClass.getType());
+
+                        Document admin = dataCollection.find(new Document("_id", ccp.get_id())).first();
+                        if (admin == null || admin.isEmpty()) {
+                            dataCollection.insertOne(ccp.toDocument());
                         }
                     }
                 }
             }
-            
-        }).start();
+        }
+
+        return dataCollection.find().iterator();
     }
-    
-    private void CreateVTP(Configuration config) {
+
+    private MongoCursor<Document> CreateVTP(Configuration config) {
         MongoDatabase database = this.databaseConnection().getDatabase("AAMUSTED_DB");
         MongoCollection<Document> dataCollection = database.getCollection("VenueTimePair");
         ObservableList<Venue> venueData = FXCollections.observableArrayList();
         VenueTimePair VTP = new VenueTimePair();
         venueData = getVenues();
-        for (String day : config.getDays()) {
+        for (ObservableMap<String, Object> day : config.getDays()) {
+            DaysObject d=DaysObject.fromMap(day);
             for (Iterator<ObservableMap<String, Object>> it = config.getPeriods().iterator(); it.hasNext();) {
-                PeriodsObject PO = PeriodsObject.getPeriodsObjectFromMap(it.next());
-                for (Venue venue : venueData) {
-                    VTP.setUniqueId(day.replaceAll("\\s+", "") + PO.getPeriod().replaceAll("\\s+", "") + venue.getName().replaceAll("\\s+", ""));
+                PeriodsObject PO = PeriodsObject.fromMap(it.next());
+                for (Venue venue : venueData) {                
+                    VTP.setUniqueId(d.getDay().replaceAll("\\s+", "") + PO.getPeriod().replaceAll("\\s+", "") + venue.getName().replaceAll("\\s+", ""));
                     VTP.set_id(new ObjectId());
-                    VTP.setDay(day);
+                    VTP.setDay(d.getDay());
                     VTP.setIsDisabilityAccessible(venue.getIsDisabilityAccessible());
-                    VTP.setPeriod(PO.ToDocument());
+                    VTP.setPeriod(PO.toDocument());
                     VTP.setVenueCapacity(venue.getCapacity());
                     VTP.setVenueName(venue.getName());
+                    VTP.setEve(d.isEve());
+                    VTP.setReg(d.isReg());
+                    VTP.setWnd(d.isWnd());                  
                     Document data = dataCollection.find(new Document("uniqueId", VTP.getUniqueId())).first();
                     if (data != null && !data.isEmpty()) {
                         dataCollection.deleteOne(new Document("uniqueId", VTP.getUniqueId()));
                     }
                     dataCollection.insertOne(VTP.toDocument());
-                    
                 }
-                
+
             }
         }
-        
+        return dataCollection.find().iterator();
+
     }
-    
-    private void CreateLTP(Configuration config) {
+
+    private MongoCursor<Document> CreateLTP(Configuration config) {
         MongoDatabase database = this.databaseConnection().getDatabase("AAMUSTED_DB");
         MongoCollection<Document> CourseCollection = database.getCollection("Courses");
         ObservableList<CoursesObject> listOfCourses = FXCollections.observableArrayList();
@@ -662,160 +676,27 @@ public class DatabaseServices {
                 listOfCourses.add(data);
             }
         }
-        
+
         MongoCollection<Document> collection = database.getCollection("LiberalCourseTimePair");
         for (CoursesObject course : listOfCourses) {
             LiberalTimePair LTP = new LiberalTimePair();
             LTP.setUmiqueId(course.getCode() + config.getLaDay().replaceAll("\\s+", "") + config.getLaPeriod().replaceAll("\\s+", ""));
             LTP.setDay(config.getLaDay());
             LTP.setPeriod(config.getLaPeriod());
+            LTP.setLecturerName(course.getLecturerName());
+            LTP.setLecturerEmail(course.getLecturerEmail());
+            LTP.setLecturerPhone(course.getLecturerPhone());
             LTP.setCourseCode(course.getCode());
-            LTP.setLevel("");            
-            LTP.setId(new ObjectId());
+            LTP.setLevel("");
+            LTP.set_id(new ObjectId());
             collection.findOneAndDelete(new Document("umiqueId", LTP.getUmiqueId()));
-            collection.insertOne(LTP.getLiberalToDocument());
-            
+            collection.insertOne(LTP.toDocument());
+
         }
+        return collection.find().iterator();
     }
-    
-    public void GenerateTable(String results) {
-        Configuration config = getConfig();
-        MongoDatabase database = this.databaseConnection().getDatabase("AAMUSTED_DB");
-        MongoCollection<Document> CCPCollection = database.getCollection("ClassCoursePair");
-        ObservableList<ClassCoursePair> ListCCP = FXCollections.observableArrayList();
-        MongoCursor<Document> CCPCoursor = CCPCollection.find().iterator();
-        while (CCPCoursor.hasNext()) {
-            ListCCP.add(new ClassCoursePair().fromDocument(CCPCoursor.next()));
-        }
-        
-        ObservableList<VenueTimePair> ListVTP = FXCollections.observableArrayList();
-        MongoCollection<Document> VTPCollection = database.getCollection("VenueTimePair");
-        MongoCursor<Document> VTPCoursor = VTPCollection.find().iterator();
-        while (VTPCoursor.hasNext()) {
-            ListVTP.add(new VenueTimePair().fromDocument(VTPCoursor.next()));
-        }
-        
-        ObservableList<LiberalTimePair> ListLCP = FXCollections.observableArrayList();
-        MongoCollection<Document> LCPCollection = database.getCollection("LiberalCourseTimePair");
-        MongoCursor<Document> LCPCoursor = LCPCollection.find().iterator();
-        while (LCPCoursor.hasNext()) {
-            ListLCP.add(LiberalTimePair.fromDocument(LCPCoursor.next()));
-        }
-        
-        int count = 1;
-        Random rand = new Random();
-        Collections.shuffle(ListVTP);
-        //Asign Special Classes==============================================
-        for (int i = 0; i < ListCCP.size(); i++) {
-            ClassCoursePair CCP = ListCCP.get(i);
-            for (int j = 0; j < ListVTP.size(); j++) {
-                VenueTimePair VTP = ListVTP.get(j);
-                if (CCP.getCourseSpecialVenue().equals(VTP.getVenueName())) {
-                    PeriodsObject p = PeriodsObject.getSpecialVenueFromDoc(VTP.getPeriod());
-                    TableObject table = new TableObject();
-                    table.setCourseCode(CCP.getCourseCode());
-                    table.setLevel(CCP.getClassLevel());
-                    table.setDay(VTP.getDay());
-                    table.setStuClass(CCP.getClassName());
-                    table.setVenue(VTP.getVenueName());
-                    table.setPeriod(p.getPeriod());
-                    table.setUniqueId(CCP.getClassName().replaceAll("\\s+", "") + VTP.getDay().replaceAll("\\s+", "") + p.getPeriod().replaceAll("\\s+", "") + VTP.getVenueName().replaceAll("\\s+", ""));
-                    saveTable(table);
-                    ListCCP.remove(CCP);
-                    ListVTP.remove(VTP);
-                }
-            }
-        }
-        //end of special course========================================================================
-        //Liberal Course=================================================================
-        Collections.sort(ListVTP, (VenueTimePair o1, VenueTimePair o2) -> Integer.valueOf(o1.getVenueCapacity()).compareTo(Integer.valueOf(o2.getVenueCapacity())));
-        FXCollections.reverse(ListVTP);
-        ObservableList<VenueTimePair> LAVenues = FXCollections.observableArrayList();
-        int end = ListLCP.size();
-        for (int j = 0; j < ListVTP.size(); j++) {
-            if (isLiberal(config, ListVTP.get(j))) {
-                end--;
-                LAVenues.add(ListVTP.get(j));
-                ListVTP.remove(j);
-            }
-            if (end == 0) {
-                break;
-            }
-        }
-        createLaberalCourseTable(LAVenues, ListLCP);
-        Collections.shuffle(ListVTP);
-        for (VenueTimePair VTP : ListVTP) {
-            if (ListCCP.isEmpty()) {
-                break;
-            } else {
-                while (true) {
-                    Collections.shuffle(ListCCP);
-                    ClassCoursePair CCP = ListCCP.get(rand.nextInt(ListCCP.size()));
-                    if (matchCapacity(VTP, CCP)) {
-                        PeriodsObject p = PeriodsObject.getSpecialVenueFromDoc(VTP.getPeriod());
-                        TableObject table = new TableObject();
-                        table.setCourseCode(CCP.getCourseCode());
-                        table.setLevel(CCP.getClassLevel());
-                        table.setDay(VTP.getDay());
-                        table.setStuClass(CCP.getClassName());
-                        table.setVenue(VTP.getVenueName());
-                        table.setPeriod(p.getPeriod());
-                        table.setUniqueId(CCP.getClassName().replaceAll("\\s+", "") + VTP.getDay().replaceAll("\\s+", "") + p.getPeriod().replaceAll("\\s+", "") + VTP.getVenueName().replaceAll("\\s+", ""));
-                        saveTable(table);
-                        ListCCP.remove(CCP);
-                        break;
-                    }
-                }
-                
-            }
-        }
-        
-    }
-    
-    private boolean matchCapacity(VenueTimePair VTP, ClassCoursePair CCP) {
-        int cap = Integer.parseInt(CCP.getClassSize());
-        int size = Integer.parseInt(VTP.getVenueCapacity());
-        return cap < size - 15 || cap + 20 > size;
-    }
-    
-    private boolean matchDisability(VenueTimePair VTP, ClassCoursePair CCP) {
-        return VTP.getIsDisabilityAccessible().replaceAll("\\s+", "").toLowerCase().equals(CCP.getClassHasDisability().replaceAll("\\s+", "").toLowerCase());
-    }
-    
-    private boolean isLiberal(Configuration config, VenueTimePair get) {
-        PeriodsObject p = PeriodsObject.getSpecialVenueFromDoc(get.getPeriod());
-        return config.getLaDay().equals(get.getDay()) && config.getLaPeriod().equals(p.getPeriod());
-    }
-    
-    private void createLaberalCourseTable(ObservableList<VenueTimePair> LAVenues, ObservableList<LiberalTimePair> ListLCP) {
-        Random rand = new Random();
-        for (VenueTimePair VTP : LAVenues) {
-            if (ListLCP.isEmpty()) {
-                break;
-            } else {
-                LiberalTimePair LCP = ListLCP.get(rand.nextInt(ListLCP.size()));
-                PeriodsObject p = PeriodsObject.getSpecialVenueFromDoc(VTP.getPeriod());
-                TableObject table = new TableObject();
-                table.setCourseCode(LCP.getCourseCode());
-                table.setLevel(LCP.getLevel());
-                table.setDay(VTP.getDay());
-                table.setStuClass("");
-                table.setVenue(VTP.getVenueName());
-                table.setPeriod(p.getPeriod());
-                table.setUniqueId(VTP.getDay().replaceAll("\\s+", "") + p.getPeriod().replaceAll("\\s+", "") + VTP.getVenueName().replaceAll("\\s+", ""));
-                saveTable(table);
-                ListLCP.remove(LCP);
-            }
-        }
-    }
-    
-    private void saveTable(TableObject table) {
-        MongoDatabase database = this.databaseConnection().getDatabase("AAMUSTED_DB");
-        MongoCollection<Document> dataCollection = database.getCollection("Tables");
-        dataCollection.findOneAndDelete(new Document("uniqueId", table.getUniqueId()));
-        dataCollection.insertOne(table.toDocument());
-    }
-    
+
+
     public ObservableList<TableObject> getTables() {
         MongoDatabase database = this.databaseConnection().getDatabase("AAMUSTED_DB");
         MongoCollection<Document> dataCollection = database.getCollection("Tables");
@@ -826,5 +707,19 @@ public class DatabaseServices {
         }
         return table;
     }
-    
+
+    public Document DeleteConfig(Configuration config) {
+        MongoDatabase database = this.databaseConnection().getDatabase("AAMUSTED_DB");
+        MongoCollection<Document> configCollection = database.getCollection("Config");
+        MongoCollection<Document> LCTPCollection = database.getCollection("LiberalCourseTimePair");
+        MongoCollection<Document> VTPCollection = database.getCollection("VenueTimePair");
+        MongoCollection<Document> CCPCollection = database.getCollection("ClassCoursePair");
+        MongoCollection<Document> tableCollection = database.getCollection("Tables");
+        LCTPCollection.drop();
+        VTPCollection.drop();
+        CCPCollection.drop();      
+        tableCollection.drop();
+        return configCollection.findOneAndDelete(new Document("_id", config.getId()));
+    }
+
 }

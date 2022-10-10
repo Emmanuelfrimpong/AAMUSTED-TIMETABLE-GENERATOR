@@ -1,14 +1,20 @@
 package Controllers;
 
 import GlobalFunctions.ActionButtonTableCell;
+import GlobalFunctions.ExcelServices;
 import GlobalFunctions.GlobalFunctions;
+import GlobalFunctions.LoadingDailog;
 import MongoServices.DatabaseServices;
 import Objects.Venue;
 import com.jfoenix.controls.JFXButton;
+import java.awt.Desktop;
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Service;
@@ -29,6 +35,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javax.swing.JFileChooser;
 
 /**
  * FXML Controller class
@@ -41,8 +48,6 @@ public class VenuePageController implements Initializable {
     private TextField tf_search;
     @FXML
     private JFXButton btn_import;
-    @FXML
-    private JFXButton btn_addNew;
     @FXML
     private ImageView btn_refresh;
     @FXML
@@ -62,6 +67,9 @@ public class VenuePageController implements Initializable {
     FileChooser fileChooser = new FileChooser();
     GlobalFunctions GF = new GlobalFunctions();
     private ObservableList<Venue> venueData;
+      private ExcelServices ES = new ExcelServices();
+    @FXML
+    private JFXButton btn_download;
 
   
 
@@ -81,17 +89,13 @@ public class VenuePageController implements Initializable {
         );
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         File selectedFile = fileChooser.showOpenDialog(stage);
-        if (selectedFile!=null&&selectedFile.exists()) {
-           Stage load= GF.LoadingDailog("");
-           load.showAndWait();
+        if (selectedFile!=null&&selectedFile.exists()) {                   
               ObservableList<Venue> incomingData = DBservices.LoadVenue(selectedFile);
               if(incomingData!=null){
                 //DBservices.createVenueTimePair();  
                 getVenues();
               }
-              GF.showToast("Venue Saved Successfully", stage);
-             
-              load.close();
+              GF.showToast("Venue Saved Successfully", stage);                      
         }
     }
     
@@ -150,12 +154,18 @@ public class VenuePageController implements Initializable {
 
    
 
-    @FXML
-    private void handleAddNew(ActionEvent event) {
-    }
 
     @FXML
     private void handleRfresh(MouseEvent event) {
+        getVenues();
     }
+
+    @FXML
+    private void handleDownload(ActionEvent event) {
+        
+        ES.ExportVenue();
+       
+    
+                }
 
 }
