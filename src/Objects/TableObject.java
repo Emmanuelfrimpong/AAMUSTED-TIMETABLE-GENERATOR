@@ -19,8 +19,9 @@ public class TableObject {
     String courseCode;
     String level;
     String stuClass;
+    String type;
 
-    public TableObject(String uniqueId, String day, String period, String venue, String lecturer, String courseCode, String level, String stuClass) {
+    public TableObject(String uniqueId, String day, String period, String venue, String lecturer, String courseCode, String level, String stuClass, String type) {
         this.uniqueId = uniqueId;
         this.day = day;
         this.period = period;
@@ -29,9 +30,10 @@ public class TableObject {
         this.courseCode = courseCode;
         this.level = level;
         this.stuClass = stuClass;
+        this.type = type;
     }
-     public TableObject() {
-        
+
+    public TableObject() {
     }
 
     public String getUniqueId() {
@@ -98,7 +100,15 @@ public class TableObject {
         this.stuClass = stuClass;
     }
 
+    public String getType() {
+        return type;
+    }
 
+    public void setType(String type) {
+        this.type = type;
+    }
+
+   
     public Document toDocument(){
         Document doc = new Document();
         doc.append("uniqueId", uniqueId);
@@ -109,6 +119,7 @@ public class TableObject {
         doc.append("courseCode", courseCode);
         doc.append("level", level);
         doc.append("stuClass", stuClass);
+         doc.append("type", type);
         return doc;
     }
 
@@ -122,9 +133,12 @@ public class TableObject {
         tableObject.setCourseCode(doc.getString("courseCode"));
         tableObject.setLevel(doc.getString("level"));
         tableObject.setStuClass(doc.getString("stuClass"));
+        tableObject.setStuClass(doc.getString("type"));
         return tableObject;
     }
     
-    
+     public String ToString(){
+        return "\nClass: "+this.stuClass+"\nCourse: "+this.courseCode+"\nVenue: "+this.venue+"\nLect: "+this.lecturer+"\n";
+    }
     
 }

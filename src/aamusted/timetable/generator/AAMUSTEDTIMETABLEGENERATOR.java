@@ -1,6 +1,5 @@
 package aamusted.timetable.generator;
 
-import Controllers.SettingsPageController;
 import GlobalFunctions.GlobalFunctions;
 import MongoServices.DatabaseServices;
 import Objects.Configuration;

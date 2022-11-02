@@ -1,27 +1,22 @@
 package Controllers;
 
-import Objects.TableIViewtem;
 import Objects.TableObject;
 import Objects.TableRowItem;
-import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.geometry.Insets;
 import javafx.scene.control.Label;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Region;
+import javafx.scene.control.TableView;
+import javafx.util.Callback;
 
 /**
  * FXML Controller class
@@ -33,15 +28,62 @@ public class TableItemController implements Initializable {
     @FXML
     private Label lb_day;
     @FXML
-    private GridPane grid;
+    private TableView<TableRowItem> tv_table;
 
     /**
      * Initializes the controller class.
      */
+    Callback factory;
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        final List<String> colors = Arrays.asList(
+        "blue",
+        "green",
+        "red",
+        "violet",
+        "yellow"
+);
+
+ factory = new Callback<TableColumn<TableRowItem, Object>, TableCell<TableRowItem, Object>>() {
+
+    private int columns = tv_table.getColumns().size();
+
+    @Override
+    public TableCell<TableRowItem, Object> call(TableColumn<TableRowItem, Object> param) {
+        return new TableCell<TableRowItem, Object>() {
+            private int columnIndex = param.getTableView().getColumns().indexOf(param);
+            @Override
+            public void updateIndex(int i) {
+                super.updateIndex(i);
+                // select color based on index of row/column
+                if (i >= 0) {
+                    // select color repeating the color, if we run out of colors
+                    String color = colors.get((i * columns + columnIndex) % colors.size());
+                    this.setStyle("-fx-my-cell-background: " + color + ";");
+                    System.out.println(getStyle());
+                }
+            }
+
+            @Override
+            protected void updateItem(Object item, boolean empty) {
+                super.updateItem(item, empty);
+
+                // assign item's toString value as text
+                if (empty || item == null) {
+                    setText(null);
+                } else {
+                    setText(item.toString());
+                }
+            }
+
+        };
+    }
+
+};
 
     }
+    
+    
 
     public void setData(ObservableList<TableObject> tables) {
         if (tables != null) {
@@ -82,27 +124,118 @@ public class TableItemController implements Initializable {
                 AllSeperatePeriods.add(fourthList);
             }
 
-            for (int i = 0; i < AllSeperatePeriods.size(); i++) {
-                try {
-                    ObservableList<TableObject> list = AllSeperatePeriods.get(i);
-                    FXMLLoader fxmlLoader = new FXMLLoader();
-                    fxmlLoader.setLocation(getClass().getResource("/FrontEnds/ListItem.fxml"));
-                    AnchorPane anchorPane = fxmlLoader.load();
-                    ListItemController itemController = fxmlLoader.getController();
-                    itemController.setData(list);
-                    grid.add(anchorPane, i + 1, 1); //(child,column,row)
-                    grid.setMinWidth(Region.USE_COMPUTED_SIZE);
-                    grid.setPrefWidth(Region.USE_COMPUTED_SIZE);
-                    grid.setMaxWidth(Region.USE_PREF_SIZE);
-                    grid.setMinHeight(Region.USE_COMPUTED_SIZE);
-                    grid.setPrefHeight(Region.USE_COMPUTED_SIZE);
-                    grid.setMaxHeight(Region.USE_PREF_SIZE);
-                    GridPane.setMargin(anchorPane, new Insets(0));
-                } catch (IOException ex) {
-                    Logger.getLogger(TableItemController.class.getName()).log(Level.SEVERE, null, ex);
+            ObservableList<TableRowItem> rows = FXCollections.observableArrayList();
+            ObservableList<TableObject> list1 = FXCollections.observableArrayList();
+            ObservableList<TableObject> list2 = FXCollections.observableArrayList();
+            ObservableList<TableObject> list3 = FXCollections.observableArrayList();
+            ObservableList<TableObject> list4 = FXCollections.observableArrayList();
+            for (ObservableList<TableObject> list : AllSeperatePeriods) {
+                TableColumn<TableRowItem, String> col = new TableColumn(list.get(0).getPeriod());
+                switch (list.get(0).getPeriod()) {
+                    case "1st Period":
+                        col.setCellValueFactory(param -> new ReadOnlyStringWrapper(param.getValue().getCol1()));
+                        col.setCellFactory(factory);
+                        list1 = list;
+                        break;
+                    case "2nd Period":
+                        col.setCellValueFactory(param -> new ReadOnlyStringWrapper(param.getValue().getCol2()));
+                        list2 = list;
+                        break;
+                    case "3rd Period":
+                        col.setCellValueFactory(param -> new ReadOnlyStringWrapper(param.getValue().getCol3()));
+                        list3 = list;
+                        break;
+                    case "4th Period":
+                        list4 = list;
+                        col.setCellValueFactory(param -> new ReadOnlyStringWrapper(param.getValue().getCol4()));
+                        break;
+                    default:
+                        break;
+
                 }
+                tv_table.getColumns().add(col);
 
             }
+            int biggest = 0;
+            if (!list1.isEmpty()) {
+                if (list1.size() > biggest) {
+                    biggest = list1.size();
+                }
+            }
+            if (!list2.isEmpty()) {
+                if (list2.size() > biggest) {
+                    biggest = list2.size();
+                }
+            }
+            if (!list3.isEmpty()) {
+                if (list3.size() > biggest) {
+                    biggest = list3.size();
+                }
+            }
+            if (!list4.isEmpty()) {
+                if (list4.size() > biggest) {
+                    biggest = list4.size();
+                }
+            }
+            if (!list1.isEmpty()) {
+                FXCollections.shuffle(list1);
+                for (int i = 0; i < biggest; i++) {
+                    if (i < list1.size()) {
+                        if (i < rows.size()) {
+                            rows.get(i).setCol1(list1.get(i).ToString());
+                        } else {
+                            TableRowItem ro = new TableRowItem();
+                            ro.setCol1(list1.get(i).ToString());
+                            rows.add(ro);
+                        }
+                    }
+                }
+            }
+                if (!list2.isEmpty()) {
+                FXCollections.shuffle(list2);
+                for (int i = 0; i < biggest; i++) {
+                    if (i < list2.size()) {
+                        if (i < rows.size()) {
+                            rows.get(i).setCol2(list2.get(i).ToString());
+                        } else {
+                            TableRowItem ro = new TableRowItem();
+                            ro.setCol2(list2.get(i).ToString());
+                            rows.add(ro);
+                        }
+                    }
+                }
+            }
+                if (!list3.isEmpty()) {
+                FXCollections.shuffle(list3);
+                for (int i = 0; i < biggest; i++) {
+                    if (i < list3.size()) {
+                        if (i < rows.size()) {
+                            rows.get(i).setCol3(list3.get(i).ToString());
+                        } else {
+                            TableRowItem ro = new TableRowItem();
+                            ro.setCol3(list3.get(i).ToString());
+                            rows.add(ro);
+                        }
+                    }
+                }
+            }
+                if (!list4.isEmpty()) {
+                FXCollections.shuffle(list4);
+                for (int i = 0; i < biggest; i++) {
+                    if (i < list4.size()) {
+                        if (i < rows.size()) {
+                            rows.get(i).setCol4(list4.get(i).ToString());
+                        } else {
+                            TableRowItem ro = new TableRowItem();
+                            ro.setCol4(list4.get(i).ToString());
+                            rows.add(ro);
+                        }
+                    }
+                }
+            }
+
+            tv_table.setItems(rows);
+        }
 
 //            int biggest = 0;
 //            ObservableList<TableObject> l1 = FXCollections.observableArrayList();
@@ -188,7 +321,7 @@ public class TableItemController implements Initializable {
 //
 //          
 //        }
-        }
+//        }
+        //}
     }
-
 }

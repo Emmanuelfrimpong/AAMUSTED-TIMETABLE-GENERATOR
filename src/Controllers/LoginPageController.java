@@ -80,7 +80,7 @@ public class LoginPageController implements Initializable {
 
     private void logUserIn(Event event) {
 
-        LoadingDailog loading = new LoadingDailog("Loging in........");
+      //  LoadingDailog loading = new LoadingDailog("Loging in........");
         if (!tf_username.getText().isEmpty() && !tf_password.getText().isEmpty()) {
             Task<Boolean> task = new Task<Boolean>() {
                 @Override
@@ -89,9 +89,9 @@ public class LoginPageController implements Initializable {
                 }
             };
 
-            task.setOnRunning((e) -> loading.show());
+            //task.setOnRunning((e) -> loading.show());
             task.setOnSucceeded((e) -> {
-                loading.close();
+                //loading.close();
                 try {
                     Boolean returnValue = task.get();
                     if (returnValue) {
@@ -127,7 +127,7 @@ public class LoginPageController implements Initializable {
 
             });
             task.setOnFailed((e) -> {
-                loading.close();
+               // loading.close();
             });
             new Thread(task).start();
         } else {
