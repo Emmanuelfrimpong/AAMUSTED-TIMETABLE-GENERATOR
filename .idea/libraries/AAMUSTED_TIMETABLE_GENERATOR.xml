@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="AAMUSTED TIMETABLE GENERATOR">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/dist/AAMUSTED TIMETABLE GENERATOR.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

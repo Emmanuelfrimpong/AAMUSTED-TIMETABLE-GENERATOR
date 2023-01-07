@@ -259,7 +259,7 @@ public class TablesPageController implements Initializable {
     @FXML
     private void handleExport(ActionEvent event) {
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        GF.showToast("This Feature is not yet Implemented", stage);
+        GF.showToast("There is no suitable Application for generating. Contact develper", stage);
     }
 
 }

@@ -140,7 +140,7 @@ public class DatabaseServices {
     boolean saved = false;
 
     public ObservableMap<String, Object> LoadStudentsToDatabase(File file) throws FileNotFoundException, IOException {
-        LoadingDailog loading = new LoadingDailog("Importing Data........");
+        
         try {
             List<String> departments = new ArrayList();
             departments.add("Liberal/African Studies");
@@ -176,7 +176,7 @@ public class DatabaseServices {
             });
             Optional<String> optionalResult = dialog.showAndWait();
             optionalResult.ifPresent((String results) -> {
-                loading.show();
+                
                 try ( FileInputStream inputStream = new FileInputStream(file);  Workbook workbook = new XSSFWorkbook(inputStream)) {
                     if (results.equals("Liberal/African Studies")) {
                         Sheet courseSheet = workbook.getSheetAt(0);
@@ -184,7 +184,7 @@ public class DatabaseServices {
                         if (GF.verifyAfricanSheet(courseTitleRow)) {
                             saved = ReadAfricanData(results, courseSheet);
                         } else {
-                            loading.close();
+                            
                             saved = false;
                             GF.inforAlert("Invalid File", "The selected Excel file do not match stated parameters",
                                     Alert.AlertType.ERROR);
@@ -197,26 +197,26 @@ public class DatabaseServices {
                         if (GF.verifyExcelFile(classTitleRow, courseTitleRow)) {
                             saved = ReadData(results, classSheet, courseSheet);
                         } else {
-                            loading.close();
+                           
                             saved = false;
                             GF.inforAlert("Invalid File", "The selected Excel file do not match stated parameters",
                                     Alert.AlertType.ERROR);
                         }
                     }
-                    loading.close();
+                    
                 } catch (FileNotFoundException ex) {
-                    loading.close();
+                   
                     saved = false;
                     GF.inforAlert("File Error", ex.getMessage(), Alert.AlertType.ERROR);
 
                 } catch (IOException ex) {
-                    loading.close();
+                   
                     saved = false;
                     GF.inforAlert("File Error", ex.getMessage(), Alert.AlertType.ERROR);
                 }
             });
         } catch (Exception error) {
-            loading.close();
+            
             GF.inforAlert("Excel Error", error.toString(), Alert.AlertType.ERROR);
         }
         ObservableMap<String, Object> data = FXCollections.observableHashMap();
